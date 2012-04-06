@@ -1,16 +1,31 @@
 #include <avr/io.h>
 #include <stdint.h>
 
+/** @file
+ * @brief Timer access headerfile.
+ *
+ * Defines macros that allow easyer, but still generic, access to the timers and several of their modes.
+ * 
+ */
 
 
-/** Setting up timer1 in Clear Timer on Compare mode.
- * Example usage:
- * /code{.c}
- * T0_CTC_INT(50, 4)
- * /encode
+
+/** 
+ * @brief Setting up timer0 in Clear Timer on Compare mode
+ *
+ * The Clear Timer on Compare mode will clear the timer when it has counted to 
+ * a certain value (Parameter TOP). This macro enables the interrupt for this
+ * event. The physical output bin for timer 0, dc0 will be deactivated. This
+ * active behaviour might change in the future.
+ *
+ * Moreover, this macro also sets up a user defined Prescaler. Since the 
+ * prescaler setting also allows the deactivation of the clock a separate
+ * macro might omit this funktionality in the future.
  *
  * @param TOP 8 bit compare value at wich the timer should be cleared.
- * @param prescaler Selecting clock source. Bit 2, 1 and 0 are written into CS02, CS01 and CS00 see Atmega32 manual (2503Q-AVR-02/11) p.82.
+ * @param PRESCALER Selects the clock source. Bit 2, 1 and 0 are written into 
+ *                  CS02, CS01 and CS00 see Atmega32 manual (2503Q-AVR-02/11) 
+ * 	            page 82. Please refer to the manual for more information.
  */
 #define T0_CTC_INT(TOP, PRESCALER) do{ \
 	/* Makeing sure physical pin OC0 is not touched */\
@@ -26,6 +41,7 @@
 	/* Assigning the values in prescaler to CS0 bits in the register.*/\
 	/* Clear CS02, CS01 and CS00 bits */\
 	TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )|_BV( CS00 ));\
+\
 	/* Setting CS02, CS01 and CS00 when the coresponding bits in the */\
 	/* parameter "prescaler" are set. Even though it is not necessary */\
 	/* to do this, it will help improve compatibility with future devices. */\
@@ -43,12 +59,14 @@
 }while(0)
 
 
-/** Setting up timer1 in Clear Timer on Compare mode.
- * Behaves like (and in fact use) the ::T0_CTC_INT(TOP, PRESCALER) definition 
- * Example usage:
- * /code{.c}
- * t0_ctc_int(50, 4)
- * /encode
+/** 
+ * @breaf Setting up timer1 in Clear Timer on Compare mode.
+ *
+ * This funktion uses the ::T0_CTC_INT(TOP, PRESCALER) definition as its body.
+ * Therfore the behavour is exacly the same. Also, the order of the parameters
+ * was not changed.
+ *
+ * Example usage: t0_ctc_int(50, 4)
  *
  * @param top 8 bit compare value at wich the timer should be cleared.
  * @param prescaler Selecting clock source.
