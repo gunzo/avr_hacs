@@ -57,6 +57,7 @@
  *
  * @param top 8 bit value at wich the timer will be cleared.
  * @see T0_CTC_INT(TOP)
+ * @see t0_start(uint16_t clockdivision)
  *
  */
 void t0_ctc_int(uint8_t top)
@@ -76,6 +77,7 @@ void t0_ctc_int(uint8_t top)
  *                      \b 1024.
  *                      If another value than these is given then no division 
  *                      will be applied.
+ * @see t0_start(uint16_t clockdivision)
  */
 #define T0_START( CLOCKDIVISION ) do{ \
 	/* Converting CLOCKDIVISION to a binary represation. */\
@@ -102,3 +104,21 @@ void t0_ctc_int(uint8_t top)
 				break; \
 	} \
 }while(0)
+
+
+/** 
+ * @brief Funktion for starting timer0.
+ *
+ * This funktion uses the ::T0_START( CLOCKDIVISION ) definition as its body.
+ * Therfore the behavour is exacly the same.
+ *
+ * Example usage: t0_start(256);
+ *
+ * @param top 8 bit value at wich the timer will be cleared.
+ * @see T0_START( CLOCKDIVISION )
+ *
+ */
+void t0_start(uint16_t clockdivision)
+{
+	T0_START( clockdivision );
+}
