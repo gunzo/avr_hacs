@@ -15,39 +15,27 @@
  *
  * The Clear Timer on Compare mode will clear the timer when it has counted to 
  * a certain value (Parameter TOP). This macro enables the interrupt for this
- * event. The physical output bin for timer 0, dc0 will be deactivated. This
+ * event. The physical output bin for timer 0, dc0, will be deactivated. This
  * active behaviour might change in the future.
  *
- * Moreover, this macro also sets up a user defined Prescaler. Since the 
- * prescaler setting also allows the deactivation of the clock a separate
- * macro might omit this funktionality in the future.
+ * @warning This macro does not start the counter, you can do so with
+ *          T0_START( CLOCKDIVISION ).
  *
- * @param TOP 8 bit compare value at wich the timer should be cleared.
- * @param PRESCALER Selects the clock source. Bit 2, 1 and 0 are written into 
- *                  CS02, CS01 and CS00 see Atmega32 manual (2503Q-AVR-02/11) 
- * 	            page 82. Please refer to the manual for more information.
+ * @param TOP 8 bit value at wich the timer will be cleared.
+ * @see T0_START( CLOCKDIVISION )
  */
-#define T0_CTC_INT(TOP, PRESCALER) do{ \
+#define T0_CTC_INT( TOP ) do{ \
+\
 	/* Makeing sure physical pin OC0 is not touched */\
 	/* Clearing COM00 and COM01 */\
 	TCCR0 &= ~(_BV( COM00 )|_BV( COM01 ));\
+\
 	/* Setup CTC mode in the TCCR0 register */\
-	TCCR0 |= _BV(WGM01);  /* Setting WGM01 */\
-	TCCR0 &= ~_BV(WGM00);  /* Clearing WGM00 */\
+	TCCR0 |=  _BV( WGM01 );  /* Setting WGM01 */\
+	TCCR0 &= ~_BV( WGM00 );  /* Clearing WGM00 */\
 \
 	/* Assigning TOP parameter to the Output Compare Register 0 */\
 	OCR0 = TOP;\
-\
-	/* Assigning the values in prescaler to CS0 bits in the register.*/\
-	/* Clear CS02, CS01 and CS00 bits */\
-	TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )|_BV( CS00 ));\
-\
-	/* Setting CS02, CS01 and CS00 when the coresponding bits in the */\
-	/* parameter "prescaler" are set. Even though it is not necessary */\
-	/* to do this, it will help improve compatibility with future devices. */\
-	if (PRESCALER & _BV( 2 )) { TCCR0 |= _BV( CS02 ); } else { TCCR0 &= ~_BV( CS02 ); }\
-	if (PRESCALER & _BV( 1 )) { TCCR0 |= _BV( CS01 ); } else { TCCR0 &= ~_BV( CS01 ); }\
-	if (PRESCALER & _BV( 0 )) { TCCR0 |= _BV( CS00 ); } else { TCCR0 &= ~_BV( CS00 ); }\
 \
 	/* Setting the Output Compare Match Interrupt Enable 0 bit, this */\
 	/* enables the interrupt when */\
@@ -60,20 +48,57 @@
 
 
 /** 
- * @breaf Setting up timer1 in Clear Timer on Compare mode.
+ * @brief Setting up timer1 in Clear Timer on Compare mode.
  *
- * This funktion uses the ::T0_CTC_INT(TOP, PRESCALER) definition as its body.
- * Therfore the behavour is exacly the same. Also, the order of the parameters
- * was not changed.
+ * This funktion uses the ::T0_CTC_INT(TOP) definition as its body.
+ * Therfore the behavour is exacly the same.
  *
- * Example usage: t0_ctc_int(50, 4)
+ * Example usage: t0_ctc_int(50)
  *
- * @param top 8 bit compare value at wich the timer should be cleared.
- * @param prescaler Selecting clock source.
- * @see T0_CTC_INT(TOP, PRESCALER)
- *         
+ * @param top 8 bit value at wich the timer will be cleared.
+ * @see T0_CTC_INT(TOP)
+ *
  */
-void t0_ctc_int(uint8_t top , uint8_t prescaler)
+void t0_ctc_int(uint8_t top)
 {
-	T0_CTC_INT( top , prescaler );
+	T0_CTC_INT( top );
 }
+
+
+/**
+ * @brief Starting timer0.
+ *
+ * The timer will be started with the given division factor. See parameter 
+ * \b CLOCKDIVISION.
+ *
+ * @param CLOCKDIVISION Dividing factor for the main clock.
+ *                      Values are: \b 1 (no division), \b 8, \b 64, \b 256 and
+ *                      \b 1024.
+ *                      If another value than these is given then no division 
+ *                      will be applied.
+ */
+#define T0_START( CLOCKDIVISION ) do{ \
+	/* Converting CLOCKDIVISION to a binary represation. */\
+	switch ( CLOCKDIVISION ) \
+	{ \
+		case 1:		TCCR0 |=  (_BV( CS00 )); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )); /* Setting bits to 0*/ \
+				break; \
+		case 8:		TCCR0 |=   _BV( CS01 ); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS02 )|_BV( CS00 )); /* Setting bits to 0*/ \
+				break; \
+		case 64:	TCCR0 |=  (_BV( CS01 )|_BV( CS00 )); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS02 )); /* Setting bits to 0*/ \
+				break; \
+		case 256:	TCCR0 |=  (_BV( CS02 )); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS01 )|_BV( CS00 )); /* Setting bits to 0*/ \
+				break; \
+		case 1024:	TCCR0 |=  (_BV( CS02 )|_BV( CS00 )); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS01 )); /* Setting bits to 0*/ \
+				break; \
+		default:	/* Default setting is the same as 1, no division. */ \
+				TCCR0 |=  (_BV( CS00 )); /* Setting bits to 1*/ \
+				TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )); /* Setting bits to 0*/ \
+				break; \
+	} \
+}while(0)
