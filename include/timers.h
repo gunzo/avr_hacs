@@ -132,3 +132,16 @@ void t0_start(uint16_t clockdivision)
  * @see T0_START( CLOCKDIVISION )
  */
 #define T0_STOP (TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )|_BV( CS00 )) )
+
+/**
+ * @bried Funktion for stopping timer0.
+ *
+ * This funktion uses the ::T0_STOP definition as its body. Therefore, the
+ * behaviour is exacly the same.
+ *
+ * @see T0_STOP
+ */
+void t0_stop()
+{
+	T0_STOP;
+}
