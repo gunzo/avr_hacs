@@ -48,7 +48,7 @@
 
 
 /** 
- * @brief Setting up timer1 in Clear Timer on Compare mode.
+ * @brief Setting up timer0 in Clear Timer on Compare mode.
  *
  * This funktion uses the ::T0_CTC_INT(TOP) definition as its body.
  * Therfore the behavour is exacly the same.
