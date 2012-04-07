@@ -77,6 +77,7 @@ void t0_ctc_int(uint8_t top)
  *                      \b 1024.
  *                      If another value than these is given then no division 
  *                      will be applied.
+ * @see T0_STOP
  * @see t0_start(uint16_t clockdivision)
  */
 #define T0_START( CLOCKDIVISION ) do{ \
@@ -122,3 +123,12 @@ void t0_start(uint16_t clockdivision)
 {
 	T0_START( clockdivision );
 }
+
+/**
+ * @brief Stopping timer0
+ *
+ * The timer will be stopped.
+ *
+ * @see T0_START( CLOCKDIVISION )
+ */
+#define T0_STOP (TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )|_BV( CS00 )) )
