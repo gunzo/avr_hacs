@@ -55,3 +55,20 @@
  * @see LED_OFF
  */
 #define LED_TOGGLE ( PORTB ^= _BV( 0 ) )
+
+/**
+ * @brief Represents button state
+ *
+ * BTN can be used as argument for boolean tests like in if-statements or while
+ * loops. When the button is bushed, BTN will contain a non zero value (logical
+ * one). When the button is not bushed the value will be zero.
+ *
+ * Example:
+ * \code
+ * if( BTN )
+ * { LED_ON }
+ * else 
+ * { LED_OFF }
+ * \endcode
+ */
+#define BTN !(PINB & 0b00010000)
