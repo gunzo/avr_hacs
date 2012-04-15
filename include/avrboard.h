@@ -1,3 +1,5 @@
+#include<avr/io.h>
+
 /**
  * @file
  * @brief Olimex AVR Board specific headerfile
