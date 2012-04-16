@@ -38,7 +38,7 @@
 	OCR0 = TOP;\
 \
 	/* Setting the Output Compare Match Interrupt Enable 0 bit, this */\
-	/* enables the interrupt when */\
+	/* enables the interrupt when a compare match occurs. */\
 	TIMSK |= _BV( OCIE0 );\
 \
 	/* Setting the Global Interupt Enable bit, so that all interrupts will */\
