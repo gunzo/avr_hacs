@@ -114,7 +114,7 @@ void t0_ctc_int_off(void)
  * @brief Activates CTC interupt for Timer 0
  *
  * The Clear Timer on Compare match interrupt will be Enabled for timer 0. If
- * the interupt was not disabled, this definition will waste a single cycle.
+ * the interupt was not disabled.
  *
  * This funktion uses the ::T0_CTC_INT_ON as its Body.
  *
