@@ -67,6 +67,35 @@ void t0_ctc_int(uint8_t top)
 
 
 /**
+ * @brief Deactivates CTC interupt for Timer 0
+ *
+ * The Clear Timer on Compare match interrupt will be dissabled for timer 0. If
+ * the interupt was not enabled, this definition will waste a single cycle.
+ *
+ * @see T0_CTC_INT( TOP )
+ */
+#define T0_CTC_INT_OFF ( TIMSK &= ~_BV( OCIE0 ) )
+
+
+/**
+ * @brief Deactivates CTC interupt for Timer 0
+ *
+ * The Clear Timer on Compare match interrupt will be dissabled for timer 0. If
+ * the interupt was not enabled, this definition will waste a single cycle.
+ *
+ * This funktion uses the ::T0_CTC_INT_OFF as its Body.
+ *
+ * @see T0_CTC_INT_OFF
+ * @see t0_ctc_int(uint8_t top)
+ */
+void t0_ctc_int_off(void)
+{
+	T0_CTC_INT_OFF;
+}
+
+
+
+/**
  * @brief Starting timer0.
  *
  * The timer will be started with the given division factor. See parameter 
