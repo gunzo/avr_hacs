@@ -73,6 +73,8 @@ void t0_ctc_int(uint8_t top)
  * the interupt was not enabled, this definition will waste a single cycle.
  *
  * @see T0_CTC_INT( TOP )
+ * @see T0_CTC_INT_ON
+ * @see t0_ctc_int_off(void)
  */
 #define T0_CTC_INT_OFF ( TIMSK &= ~_BV( OCIE0 ) )
 
@@ -87,12 +89,43 @@ void t0_ctc_int(uint8_t top)
  *
  * @see T0_CTC_INT_OFF
  * @see t0_ctc_int(uint8_t top)
+ * @see t0_ctc_int_on(void)
  */
 void t0_ctc_int_off(void)
 {
 	T0_CTC_INT_OFF;
 }
 
+
+/**
+ * @brief Activates CTC interupt for Timer 0
+ *
+ * The Clear Timer on Compare match interrupt will be Enabled for timer 0. If
+ * the interupt was not disabled, this definition will waste a single cycle.
+ *
+ * @see T0_CTC_INT( TOP )
+ * @see T0_CTC_INT_OFF
+ * @see t0_ctc_int_on(void)
+ */
+#define T0_CTC_INT_ON ( TIMSK |= _BV( OCIE0 ) ) 
+
+
+/**
+ * @brief Activates CTC interupt for Timer 0
+ *
+ * The Clear Timer on Compare match interrupt will be Enabled for timer 0. If
+ * the interupt was not disabled, this definition will waste a single cycle.
+ *
+ * This funktion uses the ::T0_CTC_INT_ON as its Body.
+ *
+ * @see T0_CTC_INT_ON
+ * @see T0_CTC_INT_OFF
+ * @see t0_ctc_int_on(void)
+ */
+void t0_ctc_int_on(void)
+{
+	T0_CTC_INT_ON;
+}
 
 
 /**
