@@ -207,3 +207,17 @@ void t0_stop()
 {
 	T0_STOP;
 }
+
+
+/**
+ * @brief Resets timer 0 count value
+ *
+ * This will clear the value in the count register for timer 0. The timer will
+ * count from 0 after this. 
+ *
+ * This can be done wherter the timer is running or not.
+ *
+ * @see T0_START( clockdivision )
+ * @see T0_STOP
+ */
+#define T0_RESET ( TCNT0 = 0x00 )
