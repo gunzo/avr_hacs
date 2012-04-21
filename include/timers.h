@@ -177,7 +177,7 @@ void t0_ctc_int_on(void)
  *
  * Example usage: t0_start(256);
  *
- * @param top 8 bit value at wich the timer will be cleared.
+ * @param clockdivision 8 bit value at wich the timer will be cleared.
  * @see T0_START( CLOCKDIVISION )
  *
  */
@@ -215,9 +215,9 @@ void t0_stop()
  * This will clear the value in the count register for timer 0. The timer will
  * count from 0 after this. 
  *
- * This can be done wherter the timer is running or not.
+ * This can be done wherther the timer is running or not.
  *
- * @see T0_START( clockdivision )
+ * @see T0_START( CLOCKDIVISION )
  * @see T0_STOP
  */
 #define T0_RESET ( TCNT0 = 0x00 )
@@ -432,9 +432,9 @@ void t1_stop()
  * This will clear the value in the count register for timer 1. The timer will
  * count from 1 after this. 
  *
- * This can be done wherter the timer is running or not.
+ * This can be done wherther the timer is running or not.
  *
- * @see T1_START( clockdivision )
+ * @see T1_START( CLOCKDIVISION )
  * @see T1_STOP
  */
 #define T1_RESET ( TCNT1 = 0x0000 )
