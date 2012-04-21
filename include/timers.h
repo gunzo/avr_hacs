@@ -24,7 +24,9 @@
  *       after this macro.
  *
  * @param TOP 8 bit value at wich the timer will be cleared.
+ *
  * @see T0_START( CLOCKDIVISION )
+ * @see T0_COMP_MATCH
  * @see T0_CTC_INT_ON 
  */
 #define T0_CTC( TOP ) do{ \
@@ -41,6 +43,43 @@
 	OCR0 = TOP;\
 }while(0)
 
+
+/**
+ * @brief Represents timer 0 compare match state 
+ *
+ * This can be used as argument for boolean tests like in if-statements or while
+ * loops. When a compare match between the timer 0 value and OCR0 occured, this
+ * will return a logical 1 and a logical 0 otherwise.
+ *
+ * Example:
+ * \code
+ * if ( T0_COMP_MATCH ) 
+ * { ... }
+ *
+ * while ( !T0_COMP_MATCH )
+ * { ... }
+ * \endcode
+ *
+ * @warning If no Interupt vector for the compare match is executed, this flag
+ *          must be cleared manulay. This can be done with 
+ *          ::T0_COMP_MATCH_CLEAR.
+ *
+ * @see T0_CTC( TOP )
+ * @see T0_COMP_MATCH_CLEAR
+ */
+#define T0_COMP_MATCH (TIFR & _BV( OCF0 ))
+
+/**
+ * @brief Clears the compare match flag for timer 0
+ *
+ * If a compare match between the timer 0 value and OCR0 occured, the compare 
+ * match flag is set. If this flag should be cleared manualy, this macro can be
+ * used.
+ *
+ * @see T0_CTC( TOP )
+ * @see T0_COMP_MATCH
+ */
+#define T0_COMP_MATCH_CLEAR (TIFR |= _BV( OCF0 ))
 
 /** 
  * @brief Setting up timer0 in Clear Timer on Compare mode.
@@ -240,6 +279,9 @@ void t0_stop()
  * 	 and therefore supports higher resolutions than other timers.
  *
  * @param TOP 16 bit value at witch the timer will be cleared.
+ * @see T1_START( CLOCKDIVISION )
+ * @see T1_COMP_MATCH_A
+ * @see T1_CTC_INT_ON
  */
 #define T1_CTC( TOP ) do{ \
 \
@@ -255,6 +297,52 @@ void t0_stop()
 	/* Assigning TOP parameter to the Output Compare Register 1A */\
 	OCR1A = TOP;\
 }while(0)
+
+
+/**
+ * @brief Represents timer 1 compare match state with OCR1A
+ *
+ * This can be used as argument for boolean tests like in if-statements or while
+ * loops. When a compare match between the timer 1 value and OCR1A occured, this
+ * will return a logical 1 and a logical 0 otherwise.
+ *
+ * Example:
+ * \code
+ * if ( T0_COMP_MATCH_A ) 
+ * { ... }
+ *
+ * while ( !T0_COMP_MATCH_A )
+ * { ... }
+ * \endcode
+ *
+ * @note If the ctc mode with timer one is used, the comparsion for clearing
+ *       the timer can only happen with Output Compare Register 1 A. So, if the
+ *       ctc mode for timer 1 is set up, this is one of the macros to go with.
+ *
+ * @warning If no Interupt vector for the compare match is executed, this flag
+ *          must be cleared manulay. This can be done with 
+ *          ::T1_COMP_MATCH_A_CLEAR.
+ *
+ * @see T1_CTC( TOP )
+ * @see T1_COMP_MATCH_A_CLEAR
+ */
+#define T1_COMP_MATCH_A (TIFR & _BV( OCF1A ))
+
+/**
+ * @brief Clears the compare match flag for timer 1 with OCR1A
+ *
+ * If a compare match between the timer 1 value and OCR1A occured, the compare 
+ * match flag is set. If this flag should be cleared manualy, this macro can be
+ * used.
+ *
+ * @note If the ctc mode with timer one is used, the comparsion for clearing
+ *       the timer can only happen with Output Compare Register 1 A. So, if the
+ *       ctc mode for timer 1 is set up, this is one of the macros to go with.
+ *
+ * @see T1_CTC( TOP )
+ * @see T1_COMP_MATCH_A
+ */
+#define T1_COMP_MATCH_A_CLEAR (TIFR |= _BV( OCF1A ))
 
 
 /** 
