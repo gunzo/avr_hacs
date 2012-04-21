@@ -14,17 +14,20 @@
  * @brief Setting up timer0 in Clear Timer on Compare mode
  *
  * The Clear Timer on Compare mode will clear the timer when it has counted to 
- * a certain value (Parameter TOP). This macro enables the interrupt for this
- * event. The physical output bin for timer 0, dc0, will be deactivated. This
- * active behaviour might change in the future.
+ * a certain value (Parameter TOP). The physical output bin for timer 0, dc0, 
+ * will be deactivated. This active behaviour might change in the future.
  *
- * @warning This macro does not start the counter, you can do so with
- *          T0_START( CLOCKDIVISION ).
+ * @note To enable the Interupt at a compare match (or clear action), run
+ *       \code 
+ *       T0_CTC_INT_ON;
+ *       \endcode 
+ *       after this macro.
  *
  * @param TOP 8 bit value at wich the timer will be cleared.
  * @see T0_START( CLOCKDIVISION )
+ * @see T0_CTC_INT_ON 
  */
-#define T0_CTC_INT( TOP ) do{ \
+#define T0_CTC( TOP ) do{ \
 \
 	/* Makeing sure physical pin OC0 is not touched */\
 	/* Clearing COM00 and COM01 */\
@@ -36,33 +39,29 @@
 \
 	/* Assigning TOP parameter to the Output Compare Register 0 */\
 	OCR0 = TOP;\
-\
-	/* Setting the Output Compare Match Interrupt Enable 0 bit, this */\
-	/* enables the interrupt when a compare match occurs. */\
-	TIMSK |= _BV( OCIE0 );\
-\
-	/* Setting the Global Interupt Enable bit, so that all interrupts will */\
-	/* work. */\
-	SREG |= _BV( 7 );\
 }while(0)
 
 
 /** 
  * @brief Setting up timer0 in Clear Timer on Compare mode.
  *
- * This funktion uses the ::T0_CTC_INT(TOP) definition as its body.
+ * This funktion uses the ::T0_CTC(TOP) definition as its body.
  * Therfore the behavour is exacly the same.
  *
- * Example usage: t0_ctc_int(50)
+ * @note To enable the Interupt at a compare match (or clear action), run
+ *       \code 
+ *       T0_CTC_INT_ON;
+ *       \endcode 
+ *       after this macro.
  *
  * @param top 8 bit value at wich the timer will be cleared.
- * @see T0_CTC_INT(TOP)
+ * @see T0_CTC(TOP)
  * @see t0_start(uint16_t clockdivision)
  *
  */
-void t0_ctc_int(uint8_t top)
+void t0_ctc(uint8_t top)
 {
-	T0_CTC_INT( top );
+	T0_CTC( top );
 }
 
 
@@ -72,7 +71,7 @@ void t0_ctc_int(uint8_t top)
  * The Clear Timer on Compare match interrupt will be dissabled for timer 0. If
  * the interupt was not enabled, this definition will waste a single cycle.
  *
- * @see T0_CTC_INT( TOP )
+ * @see T0_CTC( TOP )
  * @see T0_CTC_INT_ON
  * @see t0_ctc_int_off(void)
  */
@@ -103,7 +102,7 @@ void t0_ctc_int_off(void)
  * The Clear Timer on Compare match interrupt will be Enabled for timer 0. If
  * the interupt was not disabled, this definition will waste a single cycle.
  *
- * @see T0_CTC_INT( TOP )
+ * @see T0_CTC( TOP )
  * @see T0_CTC_INT_OFF
  * @see t0_ctc_int_on(void)
  */
@@ -227,16 +226,22 @@ void t0_stop()
  * @brief Setting up timer1 in Clear Timer on Compare mode
  *
  * The Clear Timer on Compare mode will clear the timer when it has counted to 
- * a certain value (Parameter TOP). This macro enables the interrupt for this
- * event. The physical output pin for the timer 1A compare register, oc1a, 
- * will be deactivated. This active behaviour might change in the future.
+ * a certain value (Parameter TOP). The physical output pin for the timer 1A 
+ * compare register, OC1A, will be deactivated. This active behaviour might 
+ * change in the future.
+ *
+ * @note To enable the Interupt at a compare match (or clear action), run
+ *       \code 
+ *       T1_CTC_INT_ON;
+ *       \endcode 
+ *       after this macro.
  *
  * @note Unlicke the other timers on the Atmega32, this timer is 16bits wide
  * 	 and therefore supports higher resolutions than other timers.
  *
  * @param TOP 16 bit value at witch the timer will be cleared.
  */
-#define T1_CTC_INT( TOP ) do{ \
+#define T1_CTC( TOP ) do{ \
 \
 	/* Makeing sure physical pin OC1A is not touched */\
 	/* Clearing COM1A0 and COM1A1 */\
@@ -249,33 +254,29 @@ void t0_stop()
 \
 	/* Assigning TOP parameter to the Output Compare Register 1A */\
 	OCR1A = TOP;\
-\
-	/* Setting the Output Compare Match Interrupt Enable 1A bit, this */\
-	/* enables the interrupt when a compare match occurs. */\
-	TIMSK |= _BV( OCIE1A );\
-\
-	/* Setting the Global Interupt Enable bit, so that all interrupts will */\
-	/* work. */\
-	SREG |= _BV( 7 );\
 }while(0)
 
 
 /** 
  * @brief Setting up timer1 in Clear Timer on Compare mode.
  *
- * This funktion uses the ::T1_CTC_INT( TOP ) definition as its body.
+ * This funktion uses the ::T1_CTC( TOP ) definition as its body.
  * Therfore the behavour is exacly the same.
  *
- * Example usage: t1_ctc_int(500)
+ * @note To enable the Interupt at a compare match (or clear action), run
+ *       \code 
+ *       T1_CTC_INT_ON;
+ *       \endcode 
+ *       after this macro.
  *
  * @param top 16 bit value at witch the timer will be cleared.
- * @see T1_CTC_INT(TOP)
+ * @see T1_CTC(TOP)
  * @see t1_start(uint16_t clockdivision)
  *
  */
-void t1_ctc_int(uint16_t top)
+void t1_ctc(uint16_t top)
 {
-	T1_CTC_INT( top );
+	T1_CTC( top );
 }
 
 
@@ -285,7 +286,7 @@ void t1_ctc_int(uint16_t top)
  * The Clear Timer on Compare match interrupt will be dissabled for timer 1. If
  * the interupt was not enabled, this definition will waste a single cycle.
  *
- * @see T1_CTC_INT( TOP )
+ * @see T1_CTC( TOP )
  * @see T1_CTC_INT_ON
  * @see t1_ctc_int_off(void)
  */
@@ -316,7 +317,7 @@ void t1_ctc_int_off(void)
  * The Clear Timer on Compare match interrupt will be Enabled for timer 1. If
  * the interupt was not disabled, this definition will waste a single cycle.
  *
- * @see T1_CTC_INT( TOP )
+ * @see T1_CTC( TOP )
  * @see T1_CTC_INT_OFF
  * @see t1_ctc_int_on(void)
  */
