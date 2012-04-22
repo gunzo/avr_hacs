@@ -265,9 +265,9 @@ void t0_stop()
  * @brief Setting up timer1 in Clear Timer on Compare mode
  *
  * The Clear Timer on Compare mode will clear the timer when it has counted to 
- * a certain value (Parameter TOP). The physical output pin for the timer 1A 
- * compare register, OC1A, will be deactivated. This active behaviour might 
- * change in the future.
+ * a certain value (Parameter TOP). The physical output pins for compare 
+ * registers 1 A and 1 B, OC1A and OC1B, will be deactivated. This active
+ * behaviour might change in the future.
  *
  * @note To enable the Interupt at a compare match (or clear action), run
  *       \code 
@@ -278,29 +278,36 @@ void t0_stop()
  * @note Unlicke the other timers on the Atmega32, this timer is 16bits wide
  * 	 and therefore supports higher resolutions than other timers.
  *
- * @param TOP 16 bit value at witch the timer will be cleared.
+ * @param TOP 16 bit value at witch the timer will be cleared. 
+ * @param COMP_EXTRA 16 bit value at witch a second compartion can be made. See
+ *        ::T1_COMP_MATCH_EXTRA
+ *
  * @see T1_START( CLOCKDIVISION )
- * @see T1_COMP_MATCH_A
+ * @see T1_COMP_MATCH_TOP
  * @see T1_CTC_INT_ON
  */
-#define T1_CTC( TOP ) do{ \
+#define T1_CTC( TOP , COMP_EXTRA ) do{ \
 \
-	/* Makeing sure physical pin OC1A is not touched */\
+	/* Makeing sure physical pins OC1A and OC1B are not touched */\
 	/* Clearing COM1A0 and COM1A1 */\
 	TCCR1A &= ~(_BV( COM1A0 )|_BV( COM1A1 ));\
+	/* Clearing COM1B0 and COM1B1 */\
+	TCCR1A &= ~(_BV( COM1B0 )|_BV( COM1B1 ));\
 \
 	/* Setup CTC mode in the TCCR0 register */\
 	TCCR1B |=   _BV( WGM12 );		/* Setting  WGM12       */\
 	TCCR1A &= ~(_BV( WGM11 )|_BV( WGM10 ));	/* Clearing WGM11, WGM10*/\
 	TCCR1B &= ~ _BV( WGM13 );		/* Clearing WGM13       */\
 \
-	/* Assigning TOP parameter to the Output Compare Register 1A */\
+	/* Assigning TOP parameter to the Output Compare Register 1 A */\
 	OCR1A = TOP;\
+	/* Assigning TOP parameter to the Output Compare Register 1 B */\
+	OCR1B = COMP_EXTRA;\
 }while(0)
 
 
 /**
- * @brief Represents timer 1 compare match state with OCR1A
+ * @brief Represents timer 1 compare match state with TOP.
  *
  * This can be used as argument for boolean tests like in if-statements or while
  * loops. When a compare match between the timer 1 value and OCR1A occured, this
@@ -308,10 +315,10 @@ void t0_stop()
  *
  * Example:
  * \code
- * if ( T0_COMP_MATCH_A ) 
+ * if ( T0_COMP_MATCH_TOP ) 
  * { ... }
  *
- * while ( !T0_COMP_MATCH_A )
+ * while ( !T0_COMP_MATCH_TOP )
  * { ... }
  * \endcode
  *
@@ -321,12 +328,12 @@ void t0_stop()
  *
  * @warning If no Interupt vector for the compare match is executed, this flag
  *          must be cleared manulay. This can be done with 
- *          ::T1_COMP_MATCH_A_CLEAR.
+ *          ::T1_COMP_MATCH_TOP_CLEAR.
  *
- * @see T1_CTC( TOP )
- * @see T1_COMP_MATCH_A_CLEAR
+ * @see T1_CTC( TOP , COMP_EXTRA )
+ * @see T1_COMP_MATCH_TOP_CLEAR
  */
-#define T1_COMP_MATCH_A (TIFR & _BV( OCF1A ))
+#define T1_COMP_MATCH_TOP (TIFR & _BV( OCF1A ))
 
 /**
  * @brief Clears the compare match flag for timer 1 with OCR1A
@@ -335,14 +342,56 @@ void t0_stop()
  * match flag is set. If this flag should be cleared manualy, this macro can be
  * used.
  *
+ * @see T1_CTC( TOP , COMP_EXTRA)
+ * @see T1_COMP_MATCH_TOP
+ * @see T1_COMP_MATCH_EXTRA
+ */
+#define T1_COMP_MATCH_TOP_CLEAR (TIFR |= _BV( OCF1A ))
+
+
+/**
+ * @brief Represents timer 1 compare match state with COMP_EXTRA.
+ *
+ * This can be used as argument for boolean tests like in if-statements or while
+ * loops. When a compare match between the timer 1 value and COMP_EXTRA occured,
+ * this will return a logical 1 and a logical 0 otherwise.
+ *
+ * Example:
+ * \code
+ * if ( T1_COMP_MATCH_EXTRA ) 
+ * { ... }
+ *
+ * while ( !T1_COMP_MATCH_EXTRA )
+ * { ... }
+ * \endcode
+ *
  * @note If the ctc mode with timer one is used, the comparsion for clearing
  *       the timer can only happen with Output Compare Register 1 A. So, if the
  *       ctc mode for timer 1 is set up, this is one of the macros to go with.
  *
- * @see T1_CTC( TOP )
- * @see T1_COMP_MATCH_A
+ * @warning If no Interupt vector for the compare match is executed, this flag
+ *          must be cleared manulay. This can be done with 
+ *          ::T1_COMP_MATCH_EXTRA_CLEAR.
+ *
+ * @see T1_CTC( TOP , COMP_EXTRA )
+ * @see T1_COMP_MATCH_EXTRA_CLEAR
+ * @see T1_COMP_MATCH_TOP
  */
-#define T1_COMP_MATCH_A_CLEAR (TIFR |= _BV( OCF1A ))
+#define T1_COMP_MATCH_EXTRA (TIFR & _BV( OCF1B ))
+
+/**
+ * @brief Clears the compare match flag for timer 1 with OCR1A
+ *
+ * If a compare match between the timer 1 value and OCR1A occured, the compare 
+ * match flag is set. If this flag should be cleared manualy, this macro can be
+ * used.
+ *
+ * @see T1_CTC( TOP , COMP_EXTRA)
+ * @see T1_COMP_MATCH_EXTRA
+ * @see T1_COMP_MATCH_TOP
+ */
+#define T1_COMP_MATCH_EXTRA_CLEAR (TIFR |= _BV( OCF1B ))
+
 
 
 /** 
@@ -358,13 +407,16 @@ void t0_stop()
  *       after this macro.
  *
  * @param top 16 bit value at witch the timer will be cleared.
+ * @param comp_extra 16 bit value at witch a second compartion can be made. See
+ *        ::T1_COMP_MATCH_EXTRA
+ *
  * @see T1_CTC(TOP)
  * @see t1_start(uint16_t clockdivision)
  *
  */
-void t1_ctc(uint16_t top)
+void t1_ctc(uint16_t top , uint16_t comp_extra)
 {
-	T1_CTC( top );
+	T1_CTC( top , comp_extra);
 }
 
 
@@ -390,7 +442,7 @@ void t1_ctc(uint16_t top)
  * This funktion uses the ::T1_CTC_INT_OFF as its Body.
  *
  * @see T1_CTC_INT_OFF
- * @see t1_ctc_int(uint16_t top)
+ * @see t1_ctc(uint16_t top , uint16_t comp_extra)
  * @see t1_ctc_int_on(void)
  */
 void t1_ctc_int_off(void)
