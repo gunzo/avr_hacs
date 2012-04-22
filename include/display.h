@@ -7,6 +7,12 @@
  *
  * Contains a row of macros and definitions used to make writeing to the display
  * easier.
+ *
+ * @warning Macros and funktions in this headerfile use timer 1. You should not 
+ *          set up timer 1 with planing to start it after using LCD macros or
+ *          funktions. Your settings will most likely be lost.
+ *          Also, gloabal interupts will be disabled to ensure reliable
+ *          operation.
  */
 
 /**
