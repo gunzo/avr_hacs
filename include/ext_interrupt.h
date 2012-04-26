@@ -114,8 +114,8 @@
  */
 #define EXT_INT0_RISING do{ 	\
 								\
-	MCUCR |= (1<<ISC11); /* Setting ISC11 (3rd bit) to 1 */		\
-	MCUCR |= (1<<ISC10); /* Setting ISC10 (2nd bit) to 1 */		\
+	MCUCR |= (1<<ISC01); /* Setting ISC11 (3rd bit) to 1 */		\
+	MCUCR |= (1<<ISC00); /* Setting ISC10 (2nd bit) to 1 */		\
 								\
 }while(0)
 
@@ -136,8 +136,8 @@
  */
 #define EXT_INT0_FALLING do{ 	\
 								\
-	MCUCR |= (1<<ISC11); /* Setting ISC11 (3rd bit) to 1 */		\
-	MCUCR &= ~(1<<ISC10); /* Resetting ISC10 (2nd bit) to 0 */		\
+	MCUCR |= (1<<ISC01); /* Setting ISC11 (3rd bit) to 1 */		\
+	MCUCR &= ~(1<<ISC00); /* Resetting ISC10 (2nd bit) to 0 */		\
 								\
 }while(0)
 
