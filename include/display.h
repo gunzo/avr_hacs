@@ -1,5 +1,5 @@
 /** @file
- * @brief Contains a display related methods.
+ * @brief Contains display related methods.
  *
  * Contains a row of macros and definitions used to make writing to the display
  * easier.
@@ -68,32 +68,77 @@
  */
 #define LCD_DDR DDRA
 
+#ifndef LCD_CLOCKDIVISION
 /**
- * @brief Sets the pins on ::LCD_PORT as output
+ * @brief This is the clockdivision F_CPU is divided by.
  *
- * Uses ::LCD_DDR to do so. Into every pin that is needed as output pin, we
- * write a 1.
+ * This variable can be overriten by defining it before display.h is included:
+ * \code
+ * LCD_CLOCKDIVISION <new value>
+ * #include <include/display.h>
+ * \endcode
+ *
+ * @warning Only some values are valid. Pleas check ::T0_START  or 
+ *          ::T1_START for more infotmations!
+ *
+ * @see LCD_EXTRA_DIV
+ * @see LCD_TOP_DIV
+ * @see T1_START
+ * 
+ * @author Hannes
+ */
+# define LCD_CLOCKDIVISION 64
+#endif
+
+#ifndef LCD_EXTRA_DIV
+/**
+ * @brief EXTRA factor multiplies to LCD_CLOCKDIVISION.
+ *
+ * This variable can be overriten by defining it before display.h is included:
+ * \code
+ * LCD_EXTRA_DIV <new value>
+ * #include <include/display.h>
+ * \endcode
+ *
+ * @see LCD_CLOCKDIVISION
+ * @see LCD_TOP_DIV
+ * @see T1_CTC
  *
  * @author Hannes
  */
-#define LCD_PORT_SETUP (LCD_DDR |= (_BV( LCD_RS )\
-                                   |_BV( LCD_EN )\
-				   |_BV( LCD_D4 )\
-				   |_BV( LCD_D5 )\
-				   |_BV( LCD_D6 )\
-				   |_BV( LCD_D7 )\
-				   )) 
+# define LCD_EXTRA_DIV 10
+#endif
+
+#ifndef LCD_TOP_DIV
+/**
+ * @brief TOP factor multiplies to LCD_CLOCKDIVISION.
+ *
+ * This variable can be overriten by defining it before display.h is included:
+ * \code
+ * LCD_EXTRA_DIV <new value>
+ * #include <include/display.h>
+ * \endcode
+ *
+ * @see LCD_CLOCKDIVISION
+ * @see LCD_EXTRA_DIV
+ * @see T1_CTC
+ *
+ * @author Hannes
+ */
+# define LCD_TOP_DIV 20
+#endif
+
+/* This include must be after the definitions above. */
+#include <include/display_snippets.h>
 
 /**
  * @brief Sends a nibble to the LCD
  *
- * This macro sends a the lowest four bit of the parameter \b NIBBLE to the LCD
- * display ( DEM20485 SYH-LY/V ). Other Pin and Port definitions from this
- * headerfile are used.
+ * This macro sends  the lowest four bit of the parameter \b NIBBLE to the LCD.
  *
- * Since the display is not sencitive to long low phases between a pulse when
- * writing a byte, this macro can be preceded or postpositioned by time
- * commands that use some time (tested: 1 second). 
+ * Since the display is not sensitive to long low phases between a pulse when
+ * writing a byte, this macro can be preceded or postpositioned by commands 
+ * that use some time (tested: 1 second). 
  *
  * Example for writing a byte with a delay between the nibble writes. (Main 
  * ommited):
@@ -111,61 +156,143 @@
  * ...
  * \endcode
  *
- * @param RS Rgister Select bit. If 0, the nibble is written as command; if 1, 
- *           the nibble is writen into the charachter Memory. 
+ * @param WRITE_CHAR_EN If 0, the nibble is written as command; if non 0, the
+ *                      nibble is writen into the character Memory. 
  *
- * @param NIBBLE The first four bit of this parameter will be send to the
+ * @param NIBBLE The first four bits of this parameter will be send to the
  *               display.
- * @see LCD_RS
- * @see LCD_EN
- * @see LCD_D4
- * @see LCD_D5
- * @see LCD_D6
- * @see LCD_D7
- * @see LCD_PORT
- * @see LCD_DDR
+ *
+ * @author Hannes
  */
-#define LCD_WRITE_NIBBLE( RS ,  NIBBLE ) do{\
-	/* We have enought time to prepare everything for the writing. */\
-	/* A test showed that the display is not sensitive to mutch longer Low */\
-	/* times than Pulse times. */\
-\
-	/* Preparing. */\
-	/* Setting up RS (Must happen as early as possible before EN goes high). */\
-	if ( RS ) { LCD_PORT |= _BV( LCD_RS ); } else { LCD_PORT &= ~_BV( LCD_RS ); }\
-	/* Stopping and reseting timer 1. */\
-	T1_STOP;\
-	T1_RESET;\
-	/* Setting up Timer 1 in Clear Timer on Compare mode. */\
-	T1_CTC( 20 , 10 );\
-\
-	/* Setup Data. */\
-	/* If NIBBLE bit  X  is set,     set also  LCD_DX          oterhwise clear bit  LCD_DX  .*/\
-	if( NIBBLE & _BV( 0 ) ) { LCD_PORT |= _BV( LCD_D4 ); } else { LCD_PORT &= ~_BV( LCD_D4 ); }\
-	if( NIBBLE & _BV( 1 ) ) { LCD_PORT |= _BV( LCD_D5 ); } else { LCD_PORT &= ~_BV( LCD_D5 ); }\
-	if( NIBBLE & _BV( 2 ) ) { LCD_PORT |= _BV( LCD_D6 ); } else { LCD_PORT &= ~_BV( LCD_D6 ); }\
-	if( NIBBLE & _BV( 3 ) ) { LCD_PORT |= _BV( LCD_D7 ); } else { LCD_PORT &= ~_BV( LCD_D7 ); }\
-\
-	/* Generating EN signal. */\
-	/* Starting timer 1. */\
-	T1_START( 64 );\
-\
-	/* HIGH phase. */\
-	LCD_PORT |= _BV( LCD_EN ); /* EN HIGH */\
-	/* Waiting for the EXTRA compare match. */\
-	while( !T1_COMP_MATCH_EXTRA );\
-\
-	/* LOW phase. */\
-	LCD_PORT &= ~_BV( LCD_EN ); /* EN LOW */\
-	/* Waiting for the TOP compare match. */\
-	while( !T1_COMP_MATCH_TOP );\
-\
-	/* Cleaning up. */\
-	/* Stopping and reseting timer 1. */\
-	T1_STOP;\
-	T1_RESET;\
-	/* Clearing the EXTRA compare match flag. */\
-	T1_COMP_MATCH_EXTRA_CLEAR;\
-	/* Clearing the TOP compare match flag. */\
-	T1_COMP_MATCH_TOP_CLEAR;\
+#define LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE ) do{\
+	/* Set the needed pins up. */\
+	LCD_PORT_SETUP;\
+	/* If WRITE_CHAR_EN is true...  */\
+	if ( WRITE_CHAR_EN )\
+	/* ...then the LCD should interpret the data as a character... */\
+	{ LCD_CHAR_MODE; }\
+	else\
+	/* ...else it should interpret the data as a command. */\
+	{ LCD_CMD_MODE; }\
+	/* Prepares everything for the wait statements. */\
+	LCD_WAIT_SETUP;\
+	/* Start the wait timer. */\
+	LCD_WAIT_TIMER_START;\
+	/* Setting up the data that should to be send. */\
+	LCD_DATA_SETUP_LOW_NIBBLE( NIBBLE );\
+	/* Set clock high and wait. */\
+	LCD_WAIT_CLK_HIGH;\
+	/* Set clock low and wait. */\
+	LCD_WAIT_CLK_LOW;\
+	/* Done. Stop the wait timer. */\
+	LCD_WAIT_TIMER_STOP;\
 }while(0)
+
+/**
+ * @brief Sends a nibble as command to the LCD
+ *
+ * This macro is just a frontend to LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * that sets WRITE_CHAR_EN to 0 in order to enabel command mode.
+ *
+ * @param NIBBLE Nibble that should be send to the Display.
+ *
+ * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * @see LCD_CHAR_NIBBLE( NIBBLE )
+ *
+ * @author Hannes
+ */
+#define LCD_CMD_NIBBLE( NIBBLE ) LCD_WRITE_NIBBLE( 0 , NIBBLE )
+
+/**
+ * @brief Sends a nibble as a character to the LCD
+ *
+ * This macro is just a frontend to LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * that sets WRITE_CHAR_EN to 1 in order to enabel charackter mode.
+ *
+ * @param NIBBLE Nibble that should be send to the Display.
+ *
+ * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * @see LCD_CMD_NIBBLE( NIBBLE )
+ *
+ * @author Hannes
+ */
+#define LCD_CHAR_NIBBLE( NIBBLE ) LCD_WRITE_NIBBLE( 1 , NIBBLE )
+
+/**
+ * @brief Sends a byte to the LCD
+ *
+ * This macro sends the lowest four bit of the parameter \b BYTE, to the LCD,
+ * then the highest 4 bit.
+ *
+ * Since the display is not sensitive to long low phases between a pulse when
+ * writing a byte, this macro can be preceded or postpositioned by commands 
+ * that use some time (tested: 1 second). 
+ *
+ * @param WRITE_CHAR_EN If 0, the nibble is written as command; if non 0, the
+ *                      nibble is writen into the character Memory. 
+ *
+ * @param BYTE The first four bits of this parameter will be send to the
+ *             display.
+ *
+ * @author Hannes
+ */
+#define LCD_WRITE_BYTE( WRITE_CHAR_EN , BYTE ) do{\
+	/* Set the needed pins up. */\
+	LCD_PORT_SETUP;\
+	/* If WRITE_CHAR_EN is true...  */\
+	if ( WRITE_CHAR_EN )\
+	/* ...then the LCD should interpret the data as a character... */\
+	{ LCD_CHAR_MODE; }\
+	else\
+	/* ...else it should interpret the data as a command. */\
+	{ LCD_CMD_MODE; }\
+	/* Prepares everything for the wait statements. */\
+	LCD_WAIT_SETUP;\
+	/* Start the wait timer. */\
+	LCD_WAIT_TIMER_START;\
+	/* Setting up the data that should to be send, high nibble. */\
+	LCD_DATA_SETUP_HIGH_NIBBLE( BYTE );\
+	/* Set clock high and wait. */\
+	LCD_WAIT_CLK_HIGH;\
+	/* Set clock low and wait. */\
+	LCD_WAIT_CLK_LOW;\
+\
+	/* Setting up the data that should to be send, low nibble. */\
+	LCD_DATA_SETUP_LOW_NIBBLE( BYTE );\
+	/* Set clock high and wait. */\
+	LCD_WAIT_CLK_HIGH;\
+	/* Set clock low and wait. */\
+	LCD_WAIT_CLK_LOW;\
+	/* Done. Stop the wait timer. */\
+	LCD_WAIT_TIMER_STOP;\
+}while(0)
+
+/**
+ * @brief Sends a byte as command to the LCD
+ *
+ * This macro is just a frontend to LCD_WRITE_BYTE( WRITE_CHAR_EN , BYTE )
+ * that sets WRITE_CHAR_EN to 0 in order to enabel command mode.
+ *
+ * @param BYTE Byte that should be send to the Display.
+ *
+ * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * @see LCD_CHAR_NIBBLE( NIBBLE )
+ *
+ * @author Hannes
+ */
+#define LCD_CMD_BYTE( BYTE ) LCD_WRITE_BYTE( 0 , BYTE )
+
+/**
+ * @brief Sends a byte as a character to the LCD
+ *
+ * This macro is just a frontend to LCD_WRITE_BYTE( WRITE_CHAR_EN , BYTE )
+ * that sets WRITE_CHAR_EN to 1 in order to enabel charackter mode.
+ *
+ * @param BYTE Byte that should be send to the Display.
+ *
+ * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
+ * @see LCD_CMD_NIBBLE( NIBBLE )
+ *
+ * @author Hannes
+ */
+#define LCD_CHAR_BYTE( BYTE ) LCD_WRITE_BYTE( 1 , BYTE )
