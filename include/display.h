@@ -333,3 +333,32 @@
 	/* Swithcing the display ON. */\
 	LCD_CMD_BYTE( 0b00001100 );\
 }while(0)
+
+/**
+ * @brief Jumbs to the specified line of the display.
+ * 
+ * The cursor will be at the begining of the line.
+ *
+ * @param LINE_NUMBER Specifies the line to jump to. Valid values are \b 1, \b
+ *                    2, \b 3 and \b 4. If another value than those is
+ *                    specified, then the cursor will jump to line 1.
+ */
+#define LCD_JUMP_LINE( LINE_NUMBER ) do{\
+	switch( LINE_NUMBER ) {\
+		case 1: 	/* Setting Cursor to begining of line one. */\
+				LCD_CMD_BYTE( (0x80 + 0x00) );\
+				break;\
+		case 2: 	/* Setting Cursor to begining of line two. */\
+				LCD_CMD_BYTE( (0x80 + 0x40) );\
+				break;\
+		case 3: 	/* Setting Cursor to begining of line three. */\
+				LCD_CMD_BYTE( (0x80 + 0x14) );\
+				break;\
+		case 4: 	/* Setting Cursor to begining of line four. */\
+				LCD_CMD_BYTE( (0x80 + 0x54) );\
+				break;\
+		default:	/* Setting Cursor to begining of line one. */\
+				LCD_CMD_BYTE( (0x80 + 0x00) );\
+				break;\
+	}\
+}while(0)
