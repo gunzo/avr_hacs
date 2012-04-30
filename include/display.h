@@ -4,6 +4,9 @@
  * Contains a row of macros and definitions used to make writing to the display
  * easier.
  *
+ * @pre util/delay.h and include/timers.h must be included before this file is
+ *      included.
+ *
  * @warning Macros and funktions in this headerfile use timer 1. You should not 
  *          set up timer 1 with planing to run LCD macros or funktions 
  *          afterwards. Your settings will most likely be lost.
@@ -296,3 +299,37 @@
  * @author Hannes
  */
 #define LCD_CHAR_BYTE( BYTE ) LCD_WRITE_BYTE( 1 , BYTE )
+
+/**
+ * @brief Basic initialisation of the display.
+ *
+ * The display will be initialized and switched on. Therefore, it is possible
+ * to directly write charachters to the display.
+ */
+#define LCD_INIT do{\
+	/* Power on delay. */\
+	_delay_ms(15);\
+	/* Sequence the display expects. Timings are a save defaul. */\
+	LCD_CMD_NIBBLE( 0b0011 );\
+	_delay_ms(5);\
+	LCD_CMD_NIBBLE( 0b0011 );\
+	_delay_ms(1);\
+	LCD_CMD_NIBBLE( 0b0011 );\
+	_delay_ms(1);\
+	LCD_CMD_NIBBLE( 0b0010 );\
+	_delay_ms(1);\
+	/* Funktion Set */\
+	LCD_CMD_BYTE( 0b00101000 );\
+	_delay_ms(1);\
+	/* Display Off*/\
+	LCD_CMD_BYTE( 0b00001000 );\
+	_delay_ms(1);\
+	/* Display Clear */\
+	LCD_CMD_BYTE( 0b00000001 );\
+	_delay_ms(2);\
+	/* Enty Mode Set */\
+	LCD_CMD_BYTE( 0b00000110 );\
+	/* Initialisation end. */\
+	/* Swithcing the display ON. */\
+	LCD_CMD_BYTE( 0b00001100 );\
+}while(0)
