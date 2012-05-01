@@ -4,7 +4,7 @@
  * Contains a row of macros and definitions used to make writing to the display
  * easier.
  *
- * @pre util/delay.h and include/timers.h must be included before this file is
+ * @pre util/delay.h string.h and include/timers.h must be included before this file is
  *      included.
  *
  * @warning Macros and funktions in this headerfile use timer 1. You should not 
@@ -135,6 +135,22 @@
 #include <include/display_snippets.h>
 
 /**
+ * @brief Number of characters the LCD can show.
+ *
+ * This value can be used to prevent infinite loops or obvious errors. This
+ * value is not overwritable by the user.
+ */
+#define LCD_MAX_CHARS 80
+
+/**
+ * @brief Number of characters the LCD can show in a line.
+ *
+ * This value can be used to prevent infinite loops or obvious errors. This
+ * value is not overwritable by the user.
+ */
+#define LCD_MAX_CHARS_LINE 20
+
+/**
  * @brief Sends a nibble to the LCD
  *
  * This macro sends  the lowest four bit of the parameter \b NIBBLE to the LCD.
@@ -181,7 +197,7 @@
 	LCD_WAIT_SETUP;\
 	/* Start the wait timer. */\
 	LCD_WAIT_TIMER_START;\
-	/* Setting up the data that should to be send. */\
+	/* Setting up the data that should be send. */\
 	LCD_DATA_SETUP_LOW_NIBBLE( NIBBLE );\
 	/* Set clock high and wait. */\
 	LCD_WAIT_CLK_HIGH;\
@@ -253,14 +269,14 @@
 	LCD_WAIT_SETUP;\
 	/* Start the wait timer. */\
 	LCD_WAIT_TIMER_START;\
-	/* Setting up the data that should to be send, high nibble. */\
+	/* Setting up the data that should be send, high nibble. */\
 	LCD_DATA_SETUP_HIGH_NIBBLE( BYTE );\
 	/* Set clock high and wait. */\
 	LCD_WAIT_CLK_HIGH;\
 	/* Set clock low and wait. */\
 	LCD_WAIT_CLK_LOW;\
 \
-	/* Setting up the data that should to be send, low nibble. */\
+	/* Setting up the data that should be send, low nibble. */\
 	LCD_DATA_SETUP_LOW_NIBBLE( BYTE );\
 	/* Set clock high and wait. */\
 	LCD_WAIT_CLK_HIGH;\
@@ -362,3 +378,168 @@
 				break;\
 	}\
 }while(0)
+
+/**
+ * @brief Clears the display
+ *
+ * The display will be cleared and the cursor set to the first position.
+ */
+#define LCD_CLEAR LCD_CMD_BYTE(  0x01 ); _delay_ms(2)
+
+/**
+ * @brief  Writes a string to the display
+ *
+ * The character limit is defined in ::LCD_MAX_CHARS. If a provided string is 
+ * longer than ::LCD_MAX_CHARS, additional charackters will be ignored.
+ *
+ * @warning You have to make shure that the cursor and the possition of 
+ *          characters in your string are at a possition you like it to be.
+ *          Strings are written at least at the current cursor possition and at
+ *          most 80 possitions later. While writing, the physical line three is
+ *          reached before the physical line two! After that, physical line two
+ *          is writen to and finaly, physical line four.
+ *          If you don't like this, use the ::LCD_JUMP_LINE( LINE_NUMMBER ) 
+ *          together with ::lcd_write_line( char *line_text ) funktions.
+ *
+ * @param *display_text String/Char array that should be printed on the screen
+ *                      of the LCD display.
+ *
+ * @see LCD_CLEAR
+ * @see LCD_JUMP_LINE( LINE_NUMBER )
+ * @see lcd_write_line( char *display_text )
+ * @see LCD_MAX_CHARS
+ */
+void lcd_write( char *display_text )
+{
+	/* Set the needed pins up. */
+	LCD_PORT_SETUP;
+	/* The LCD should interpret the data as a character. */
+	LCD_CHAR_MODE;
+	/* Prepares everything for the wait statements. */
+	LCD_WAIT_SETUP;
+	/* Start the wait timer. */
+	LCD_WAIT_TIMER_START;
+
+	/* Finding the lenght of the provided string. */
+	size_t display_text_lenght = 0;
+	display_text_lenght = strnlen( display_text , LCD_MAX_CHARS );
+
+	/* Write all the characters to the display. */
+	uint8_t char_position = 0;
+	for( ; char_position < display_text_lenght ; char_position++ )
+	{
+		/* Setting up the data that should be send, high nibble. */
+		LCD_DATA_SETUP_HIGH_NIBBLE( display_text[ char_position ] );
+		/* Set clock high and wait. */
+		LCD_WAIT_CLK_HIGH;
+		/* Set clock low and wait. */
+		LCD_WAIT_CLK_LOW;
+
+		/* Setting up the data that should be send, low nibble. */
+		LCD_DATA_SETUP_LOW_NIBBLE( display_text[ char_position ] );
+		/* Set clock high and wait. */
+		LCD_WAIT_CLK_HIGH;
+		/* Set clock low and wait. */
+		LCD_WAIT_CLK_LOW;
+	}
+	/* Done. Stop the wait timer. */
+	LCD_WAIT_TIMER_STOP;
+}
+
+/**
+ * @brief  Writes a string to one line of the display
+ *
+ * The character limit is defined in ::LCD_MAX_CHARS_LINE. If the provided 
+ * string is longer than ::LCD_MAX_CHARS_LINE, additional charackters will be
+ * ignored.
+ *
+ * If the string is shorter than ::LCD_MAX_CHARS_LINE, the rest of the line
+ * will be cleared, meaning, the you don't have to fill it up with spaces. If
+ * you only write a space, the command will clear the hole line.
+ *
+ * @warning You have to make shure that the cursor is at a possition you like it
+ *          to be. Strings are written at least at the current cursor possition
+ *          and at most 20 possitions later. This means, if the cursor is in the
+ *          middle of a line and you write the amount of characters defined in
+ *          ::LCD_MAX_CHARS_LINE to it, you will also write half way into the
+ *          memory for another line. Use LCD_JUMP_LINE( LINE_NUMBER ) to jump
+ *          to the begining of another line.
+ *
+ * @note For conveinience, this command clears unwritten charachters remaining 
+ *       in line. If you would like to have more controll, please use the
+ *       ::lcd_write( char *display_text ) funktion.
+ *
+ * @param *line_text String/Char array that should be printed on the screen
+ *                      of the LCD display.
+ *
+ * @see LCD_CLEAR
+ * @see LCD_JUMP_LINE( LINE_NUMBER )
+ * @see lcd_write( char *display_text )
+ * @see LCD_MAX_CHARS_LINE
+ */
+void lcd_write_line( char *line_text )
+{
+	/* Set the needed pins up. */
+	LCD_PORT_SETUP;
+	/* The LCD should interpret the data as a character. */
+	LCD_CHAR_MODE;
+	/* Prepares everything for the wait statements. */
+	LCD_WAIT_SETUP;
+	/* Start the wait timer. */
+	LCD_WAIT_TIMER_START;
+
+	/* Finding the lenght of the provided string. */
+	size_t line_text_lenght = 0;
+	line_text_lenght = strnlen( line_text , LCD_MAX_CHARS_LINE );
+
+	/* Write all the characters to the display. */
+	uint8_t char_position = 0;
+	for( ; char_position < line_text_lenght ; char_position++ )
+	{
+		/* Setting up the data that should be send, high nibble. */
+		LCD_DATA_SETUP_HIGH_NIBBLE( line_text[ char_position ] );
+		/* Set clock high and wait. */
+		LCD_WAIT_CLK_HIGH;
+		/* Set clock low and wait. */
+		LCD_WAIT_CLK_LOW;
+
+		/* Setting up the data that should be send, low nibble. */
+		LCD_DATA_SETUP_LOW_NIBBLE( line_text[ char_position ] );
+		/* Set clock high and wait. */
+		LCD_WAIT_CLK_HIGH;
+		/* Set clock low and wait. */
+		LCD_WAIT_CLK_LOW;
+	}
+	/* Delete the rest of the line if not overwritten anyway. */
+	if( line_text_lenght < LCD_MAX_CHARS_LINE )
+	{
+		for( ; char_position < LCD_MAX_CHARS_LINE ; char_position++ )
+		{
+			/* Setting up the data that should be send, high nibble. */
+			LCD_DATA_SETUP_HIGH_NIBBLE( ' ' );
+			/* Set clock high and wait. */
+			LCD_WAIT_CLK_HIGH;
+			/* Set clock low and wait. */
+			LCD_WAIT_CLK_LOW;
+
+			/* Setting up the data that should be send, low nibble. */
+			LCD_DATA_SETUP_LOW_NIBBLE( ' ' );
+			/* Set clock high and wait. */
+			LCD_WAIT_CLK_HIGH;
+			/* Set clock low and wait. */
+			LCD_WAIT_CLK_LOW;
+		}
+	}
+
+	/* Done. Stop the wait timer. */
+	LCD_WAIT_TIMER_STOP;
+}
+
+/**
+ * @brief Clears a line on the LCD
+ *
+ * Clears the amount of characters specified in ::LCD_MAX_CHARS_LINE.
+ *
+ * @note This does not return the cursor to the beginning of the line. 
+ */
+#define LCD_CLEAR_LINE lcd_write_line( " " )
