@@ -359,7 +359,7 @@
  *                    2, \b 3 and \b 4. If another value than those is
  *                    specified, then the cursor will jump to line 1.
  */
-#define LCD_JUMP_LINE( LINE_NUMBER ) do{\
+#define LCD_JUMP_LINE_START( LINE_NUMBER ) do{\
 	switch( LINE_NUMBER ) {\
 		case 1: 	/* Setting Cursor to begining of line one. */\
 				LCD_CMD_BYTE( (0x80 + 0x00) );\
@@ -398,14 +398,14 @@
  *          most 80 possitions later. While writing, the physical line three is
  *          reached before the physical line two! After that, physical line two
  *          is writen to and finaly, physical line four.
- *          If you don't like this, use the ::LCD_JUMP_LINE( LINE_NUMMBER ) 
+ *          If you don't like this, use the ::LCD_JUMP_LINE_START( LINE_NUMMBER ) 
  *          together with ::lcd_write_line( char *line_text ) funktions.
  *
  * @param *display_text String/Char array that should be printed on the screen
  *                      of the LCD display.
  *
  * @see LCD_CLEAR
- * @see LCD_JUMP_LINE( LINE_NUMBER )
+ * @see LCD_JUMP_LINE_START( LINE_NUMBER )
  * @see lcd_write_line( char *display_text )
  * @see LCD_MAX_CHARS
  */
@@ -462,8 +462,8 @@ void lcd_write( char *display_text )
  *          and at most 20 possitions later. This means, if the cursor is in the
  *          middle of a line and you write the amount of characters defined in
  *          ::LCD_MAX_CHARS_LINE to it, you will also write half way into the
- *          memory for another line. Use LCD_JUMP_LINE( LINE_NUMBER ) to jump
- *          to the begining of another line.
+ *          memory for another line. Use LCD_JUMP_LINE_START( LINE_NUMBER ) to 
+ *          jump to the begining of another line.
  *
  * @note For conveinience, this command clears unwritten charachters remaining 
  *       in line. If you would like to have more controll, please use the
@@ -473,7 +473,7 @@ void lcd_write( char *display_text )
  *                      of the LCD display.
  *
  * @see LCD_CLEAR
- * @see LCD_JUMP_LINE( LINE_NUMBER )
+ * @see LCD_JUMP_LINE_START( LINE_NUMBER )
  * @see lcd_write( char *display_text )
  * @see LCD_MAX_CHARS_LINE
  */
