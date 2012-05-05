@@ -12,6 +12,9 @@
  *          afterwards. Your settings will most likely be lost.
  */
 
+#ifndef DISPLAY_H_INCLUDED 
+#define DISPLAY_H_INCLUDED
+
 /**
  * @brief LCD Register Select port number.
  *
@@ -543,3 +546,6 @@ void lcd_write_line( char *line_text )
  * @note This does not return the cursor to the beginning of the line. 
  */
 #define LCD_CLEAR_LINE lcd_write_line( " " )
+
+
+#endif /* DISPLAY_H_INCLUDED */

@@ -16,6 +16,9 @@
  * @author Hannes
  */
 
+#ifndef DISPLAY_SNIPPETS_H_INCLUDED
+#define DISPLAY_SNIPPETS_H_INCLUDED
+
 /**
  * @brief Sets the pins on ::LCD_PORT as output.
  *
@@ -183,3 +186,6 @@
 	/* Clearing the compare match TOP flag. */\
 	T1_COMP_MATCH_TOP_CLEAR;\
 }while(0)
+
+
+#endif /* DISPLAY_SNIPPETS_H_INCLUDED */

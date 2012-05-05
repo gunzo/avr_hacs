@@ -18,6 +18,8 @@
  *
 */
 
+#ifndef EXT_INTERRUPT_H_INCLUDED
+#define EXT_INTERRUPT_H_INCLUDED
 
 /**
  * @brief Set up external interrupt 1 on a Rising edge
@@ -173,4 +175,4 @@
  #define EXT_INT0_DIS GICR &= ~( 1<<INT1 ) /* Making sure INT0 is set to a 0 => disabled */
 
 
-
+#endif /* EXT_INTERRUPT_H_INCLUDED */

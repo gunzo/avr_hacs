@@ -8,6 +8,9 @@
  * AVR-P40-USB-8535 board (http://www.olimex.com/dev/avr-p40-usb-8535.html)
  */
 
+#ifndef AVRBOARD_H_INCLUDED
+#define AVRBOARD_H_INCLUDED
+
 /**
  * @brief Setup LED pin as output
  *
@@ -72,3 +75,6 @@
  * \endcode
  */
 #define BTN !(PINB & 0b00010000)
+
+
+#endif /* AVRBOARD_H_INCLUDED */

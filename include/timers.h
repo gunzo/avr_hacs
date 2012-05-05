@@ -8,7 +8,8 @@
  * 
  */
 
-
+#ifndef TIMERS_H_INCLUDED
+#define TIMERS_H_INCLUDED
 
 /** 
  * @brief Setting up timer0 in Clear Timer on Compare mode
@@ -581,3 +582,4 @@ void t1_stop()
 #define T1_RESET ( TCNT1 = 0x0000 )
 
 
+#endif /* TIMERS_H_INCLUDED */
