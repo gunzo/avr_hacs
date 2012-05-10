@@ -2,37 +2,110 @@
 
 @section intro_sec Introduction
 
-This project aims to implement a very fast and straight forward way to do
-basic operations on a electrical equipment in a single room. This room is used
-sequentaly by different people who wish to have theyr own setup when they use
-the room.
+ This project aims to implement a very fast and straight forward way to do
+ basic operations on a electrical equipment in a single room. This room is used
+ sequentially by different people who wish to have their own setup when they use
+ the room.
 	
 	@subsection basic_setup Basic setup capabilities
 
-	The system is able to do basic operations on electrical equipment, for example
-	switching the power on for an electrical device or create a shor circuit
-	between two pins (This is needed to switch a computer on). 
+	 The system is able to do basic operations on electrical equipment, for example
+	 switching the power on for an electrical device or create a short circuit
+	 between two pins (This is needed to switch a computer on). 
 
 	@subsection authent Authentication
-	
-	Users will be able to activate theyr profile based on ID cards they recive as
-	part of the Home Automation Control System. After a short setup phase on the
-	computer side of this project, the user can wipe the card on the provided RFID
-	reader and enter a pin. If the information is correct, the settings for this
-	card will be aplied.
+
+	 Users will be able to activate their profile based on ID cards they recive as
+	 part of the Home Automation Control System. After a short setup phase on the
+	 computer side of this project, the user can wipe the card on the provided RFID
+	 reader and enter a pin. If the information is correct, the settings for this
+	 card will be applied.
 
 	@subsection security Security
 
-	This system has very low security demands, since it is assumed that the
-	parties sharing the room know and trust each other. A four digit pin is
-	required to render abuse of the system by third parties harder. The
-	implemented level of security can not be considered to be more than a
-	hepl for the users not to activate the wrong settings, in case cards
-	where mixed. This helps to reasure that no divice is turned on without the
-	knowledge of the acctual benefiary of one or more devices. This might result
-	in some power savings and keep user from frustration of possibly having to
-	deal with electrical devices they otherwise never use and are unsure on how
-	to operate them.
+	 This system has very low security demands, since it is assumed that the
+	 parties sharing the room know and trust each other. A four digit pin is
+	 required to render abuse of the system by third parties harder. The
+	 implemented level of security can not be considered to be more than a
+	 help for the users not to activate the wrong settings, in case cards
+	 where mixed. This helps to reassure that no device is turned on without the
+	 knowledge of the actual beneficiary of one or more devices. This might result
+	 in some power savings and keep user from frustration of possibly having to
+	 deal with electrical devices they otherwise never use and are unsure on how
+	 to operate them.
+
 */
 
+/*! @page microcontroller Microcontroler part
+@tableofcontents
 
+@section hardware Hardware description
+
+ The hardware part manly consists of 3 modules. The computer needed for the
+ HACS server is not discussed here since it is a finished system, that
+ does not need more work or elaboration from our side. The 3 modules are
+ therefore the RFID reader, the CPLD interconnection board and the AVR 
+ development board. The AVR development board is the core of the hardware
+ system. It communicates with the hacs server computer and controls the RFID
+ reader as well the CPLD interconnection board.
+
+	@subsection block_diagrams Hardware block diagrams
+
+		@subsubsection overview_block Overview
+
+		 @image html hardware_block_diagram_overview.png "Hardware block diagram"
+		 @image latex hardware_block_diagram_overview.eps "Hardware block diagram" width=\textwidth
+
+		 Above we can see an overview of all three hardware modules. It is also
+		 indicated, that the AVR development board is connected to a computer through
+		 a USB connection. The three hardware modules are connected to each other via
+		 a 26 pin ribbon cable. The cable has no logic and simply loops the 
+		 connectors through all free boards.
+
+		@subsubsection avr_block AVR development board
+
+		 @image html hardware_block_diagram_avr.png "AVR block diagram"
+		 @image latex hardware_block_diagram_avr.eps "AVR block diagram" width=\textwidth
+
+		 Irrelevant components have been omitted.
+		 The AVR development board is an AVR-P40-USB-8535 from Olimex. The board was
+		 equipped with a 26 pin connector. 
+		 The block diagram shows the AVR development board with all relevant
+		 components on them. The heart of the board is the AVR Atmega32 micro 
+		 controller. The micro controller is connected to the CPLD interconnection
+		 board and the RFID reader via a ribbon cable. Additionally, the Atmega32
+		 micro controller can communicate with a computer. To do so, the FTDI 
+		 FT232 interface chip is used. It interfaces between simple RS232 
+		 communication (no handshaking is used) with the micro controller and USB
+		 communication with the computer. An LED and a push button on the board can
+		 be used for limited interaction with the micro controller.
+
+		@subsubsection cpld_block CPLD interconnection board
+
+		 @image html hardware_block_diagram_cpld.png "CPLD block diagram" width=10cm
+		 @image latex hardware_block_diagram_cpld.eps "CPLD block diagram" width=\textwidth
+
+		 The block diagram above is not accurate to scale, but it can be used to find
+		 the corresponding components on the real board. Dashed lines mean, that the
+		 represented connections or elements are hidden by either the hex keypad or 
+		 the 4 segment display. Both are represented by a lightly greyed area and
+		 their connectors are not dashed. The default jumper positions are marked by a
+		 darker greyed area. Connections are represented by lines with arrows on each 
+		 end. Connections with numbers are buses with a broadness represented by the 
+		 number. To clarify the meaning of jumper positions, connection lines start
+		 from the actual pin and indicate to which pin or entity they are connected
+		 to. Power lines and power related modules are not considered.
+
+		 The CPLD interconnection board was designed to connect and give the ability
+		 to connect different hardware components to the AVR development board. Two
+		 of the most important hardware modules are located directly on the CPLD
+		 interconnection board: The 4 Line display (DEM20485) and a hex keypad. 
+		 The display is directly connected to the AVR development board via the 
+		 AVR development board connector. The hex keypad is connected to the CPLD
+		 chip. This allows either to just tunnel the connector for the hex keypad
+		 through to the AVR development board, or to gather and pre-process information
+		 from the hex keypad before they are send to the AVR development board.
+
+		 Additionally, the CPLD chip allows to access all the extension connectors
+		 (for example via multiplexing), the LED's and the buttons. 
+*/
