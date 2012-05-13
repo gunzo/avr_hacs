@@ -4,7 +4,11 @@
 /** @file
  * @brief Timer access headerfile.
  *
- * Defines macros that allow easyer, but still generic, access to the timers and several of their modes.
+ * Defines macros that allow easyer, but still generic, access to the timers 
+ * and several of their modes.
+ *
+ * If you are new to this file, you might want to take a look at ::T0_CTC( TOP )
+ * and ::T1_CTC( TOP , COMP_EXTRA ).
  *
  * @author Hannes
  */
@@ -54,6 +58,8 @@
  * This can be used as argument for boolean tests like in if-statements or while
  * loops. When a compare match between the timer 0 value and OCR0 occured, this
  * will return a logical 1 and a logical 0 otherwise.
+ *
+ * @pre A valid value should be set up. This can be done with ::T0_CTC( TOP )
  *
  * Example:
  * \code
@@ -188,6 +194,10 @@ void t0_ctc_int_on(void)
  *
  * The timer will be started with the given division factor. See parameter 
  * \b CLOCKDIVISION.
+ * 
+ * @pre You probably want to set up the timer somehow first. If you would like
+ *      to clear the timer on a compare match, you can use ::T0_CTC( TOP ) to
+ *      do so.
  *
  * @param CLOCKDIVISION Dividing factor for the main clock.
  *                      Values are: \b 1 (no division), \b 8, \b 64, \b 256 and
@@ -350,6 +360,9 @@ void t0_stop()
  * { ... }
  * \endcode
  *
+ * @pre A valid value should be set up. This can be done with 
+ *      ::T1_CTC( TOP , COMP_EXTRA ). See the @b TOP parameter there.
+ *
  * @note If the ctc mode with timer one is used, the comparsion for clearing
  *       the timer can only happen with Output Compare Register 1 A. So, if the
  *       ctc mode for timer 1 is set up, this is one of the macros to go with.
@@ -396,6 +409,9 @@ void t0_stop()
  * while ( !T1_COMP_MATCH_EXTRA )
  * { ... }
  * \endcode
+ *
+ * @pre A valid value should be set up. This can be done with 
+ *      ::T1_CTC( TOP , COMP_EXTRA ). See the @b EXTRA parameter there.
  *
  * @note If the ctc mode with timer one is used, the comparsion for clearing
  *       the timer can only happen with Output Compare Register 1 A. So, if the
@@ -532,6 +548,10 @@ void t1_ctc_int_on(void)
  *
  * The timer will be started with the given division factor. See parameter 
  * \b CLOCKDIVISION.
+ * 
+ * @pre You probably want to set up the timer somehow first. If you would like
+ *      to clear the timer on a compare match, you can use ::T1_CTC( TOP ) to
+ *      do so.
  *
  * @param CLOCKDIVISION Dividing factor for the main clock.
  *                      Values are: \b 1 (no division), \b 8, \b 64, \b 256 and
