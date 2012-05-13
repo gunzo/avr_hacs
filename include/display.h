@@ -184,6 +184,9 @@
  * ...
  * \endcode
  *
+ * @pre If a charachter should be written (see parameter @b WRITE_CHAR_EN ),
+ *      the display must be first initialized. This can be done with ::LCD_INIT.
+ *
  * @param WRITE_CHAR_EN If 0, the nibble is written as command; if non 0, the
  *                      nibble is writen into the character Memory. 
  *
@@ -222,6 +225,9 @@
  * This macro is just a frontend to LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
  * that sets WRITE_CHAR_EN to 0 in order to enabel command mode.
  *
+ * @pre The display must be first initialized for this macro to have
+ *      some effect. This can be done with ::LCD_INIT.
+ *
  * @param NIBBLE Nibble that should be send to the Display.
  *
  * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
@@ -236,6 +242,9 @@
  *
  * This macro is just a frontend to LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
  * that sets WRITE_CHAR_EN to 1 in order to enabel charackter mode.
+ *
+ * @pre The display must be first initialized to be able to write a charachter
+ *      to the display with this macro. This can be done with ::LCD_INIT.
  *
  * @param NIBBLE Nibble that should be send to the Display.
  *
@@ -255,6 +264,9 @@
  * Since the display is not sensitive to long low phases between a pulse when
  * writing a byte, this macro can be preceded or postpositioned by commands 
  * that use some time (tested: 1 second). 
+ *
+ * @pre If a charachter should be written (see parameter @b WRITE_CHAR_EN ),
+ *      the display must be first initialized. This can be done with ::LCD_INIT.
  *
  * @param WRITE_CHAR_EN If 0, the nibble is written as command; if non 0, the
  *                      nibble is writen into the character Memory. 
@@ -301,6 +313,9 @@
  * This macro is just a frontend to LCD_WRITE_BYTE( WRITE_CHAR_EN , BYTE )
  * that sets WRITE_CHAR_EN to 0 in order to enabel command mode.
  *
+ * @pre The display must be first initialized for this macro to have
+ *      some effect. This can be done with ::LCD_INIT.
+ *
  * @param BYTE Byte that should be send to the Display.
  *
  * @see LCD_WRITE_NIBBLE( WRITE_CHAR_EN , NIBBLE )
@@ -315,6 +330,9 @@
  *
  * This macro is just a frontend to LCD_WRITE_BYTE( WRITE_CHAR_EN , BYTE )
  * that sets WRITE_CHAR_EN to 1 in order to enabel charackter mode.
+ *
+ * @pre The display must be first initialized to be able to write a charachter
+ *      to the display with this macro. This can be done with ::LCD_INIT.
  *
  * @param BYTE Byte that should be send to the Display.
  *
@@ -366,6 +384,9 @@
  * 
  * The cursor will be at the begining of the line.
  *
+ * @pre The display must be first initialized for this macro to have
+ *      some effect. This can be done with ::LCD_INIT.
+ *
  * @param LINE_NUMBER Specifies the line to jump to. Valid values are \b 1, \b
  *                    2, \b 3 and \b 4. If another value than those is
  *                    specified, then the cursor will jump to line 1.
@@ -397,6 +418,9 @@
  *
  * The display will be cleared and the cursor set to the first position.
  *
+ * @pre The display must be first initialized for this macro to have
+ *      some effect. This can be done with ::LCD_INIT.
+ *
  * @author Hannes
  */
 #define LCD_CLEAR LCD_CMD_BYTE(  0x01 ); _delay_ms(2)
@@ -406,6 +430,9 @@
  *
  * The character limit is defined in ::LCD_MAX_CHARS. If a provided string is 
  * longer than ::LCD_MAX_CHARS, additional charackters will be ignored.
+ *
+ * @pre The display must be first initialized to be able to write a charachter
+ *      to the display with this macro. This can be done with ::LCD_INIT.
  *
  * @warning You have to make shure that the cursor and the possition of 
  *          characters in your string are at a possition you like it to be.
@@ -473,6 +500,9 @@ void lcd_write( char *display_text )
  * If the string is shorter than ::LCD_MAX_CHARS_LINE, the rest of the line
  * will be cleared, meaning, the you don't have to fill it up with spaces. If
  * you only write a space, the command will clear the hole line.
+ *
+ * @pre The display must be first initialized to be able to write a charachter
+ *      to the display with this macro. This can be done with ::LCD_INIT.
  *
  * @warning You have to make shure that the cursor is at a possition you like it
  *          to be. Strings are written at least at the current cursor possition
@@ -558,6 +588,9 @@ void lcd_write_line( char *line_text )
  * @brief Clears a line on the LCD
  *
  * Clears the amount of characters specified in ::LCD_MAX_CHARS_LINE.
+ *
+ * @pre The display must be first initialized for this macro to have
+ *      some effect. This can be done with ::LCD_INIT.
  *
  * @note This does not return the cursor to the beginning of the line. 
  *
