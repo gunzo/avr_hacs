@@ -4,8 +4,8 @@
  * Contains a row of macros and definitions used to make writing to the display
  * easier.
  *
- * @pre util/delay.h string.h and include/timers.h must be included before this file is
- *      included.
+ * @pre \b util/delay.h, \b string.h and include/timers.h must be included
+ *      before this file is included.
  *
  * @warning Macros and funktions in this headerfile use timer 1. You should not 
  *          set up timer 1 with planing to run LCD macros or funktions 
