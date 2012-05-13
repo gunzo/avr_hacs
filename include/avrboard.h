@@ -6,6 +6,8 @@
  *
  * Contains definitions/funktions that are specific to the olimex
  * AVR-P40-USB-8535 board (http://www.olimex.com/dev/avr-p40-usb-8535.html)
+ *
+ * @author Hannes
  */
 
 #ifndef AVRBOARD_H_INCLUDED
@@ -22,6 +24,8 @@
  * @see LED_ON
  * @see LED_OFF
  * @see LED_TOGGLE
+ *
+ * @author Hannes
  */
 #define LED_ACTIVATE ( DDRB |= _BV( 0 ) )
 
@@ -33,6 +37,8 @@
  * @see LED_ACTIVATE
  * @see LED_OFF
  * @see LED_TOGGLE
+ *
+ * @author Hannes
  */
 #define LED_ON ( PORTB &= ~_BV( 0 ) )
 
@@ -44,6 +50,8 @@
  * @see LED_ACTIVATE
  * @see LED_ON
  * @see LED_TOGGLE
+ *
+ * @author Hannes
  */
 #define LED_OFF ( PORTB |= _BV( 0 ) )
 
@@ -56,6 +64,8 @@
  * @see LED_ACTIVATE
  * @see LED_ON
  * @see LED_OFF
+ *
+ * @author Hannes
  */
 #define LED_TOGGLE ( PORTB ^= _BV( 0 ) )
 
@@ -73,6 +83,8 @@
  * else 
  * { LED_OFF }
  * \endcode
+ *
+ * @author Hannes
  */
 #define BTN !(PINB & 0b00010000)
 

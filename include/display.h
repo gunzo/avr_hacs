@@ -10,6 +10,8 @@
  * @warning Macros and funktions in this headerfile use timer 1. You should not 
  *          set up timer 1 with planing to run LCD macros or funktions 
  *          afterwards. Your settings will most likely be lost.
+ *
+ * @author Hannes
  */
 
 #ifndef DISPLAY_H_INCLUDED 
@@ -142,6 +144,8 @@
  *
  * This value can be used to prevent infinite loops or obvious errors. This
  * value is not overwritable by the user.
+ *
+ * @author Hannes
  */
 #define LCD_MAX_CHARS 80
 
@@ -150,6 +154,8 @@
  *
  * This value can be used to prevent infinite loops or obvious errors. This
  * value is not overwritable by the user.
+ *
+ * @author Hannes
  */
 #define LCD_MAX_CHARS_LINE 20
 
@@ -324,6 +330,8 @@
  *
  * The display will be initialized and switched on. Therefore, it is possible
  * to directly write charachters to the display.
+ *
+ * @author Hannes
  */
 #define LCD_INIT do{\
 	/* Power on delay. */\
@@ -361,6 +369,8 @@
  * @param LINE_NUMBER Specifies the line to jump to. Valid values are \b 1, \b
  *                    2, \b 3 and \b 4. If another value than those is
  *                    specified, then the cursor will jump to line 1.
+ *
+ * @author Hannes
  */
 #define LCD_JUMP_LINE_START( LINE_NUMBER ) do{\
 	switch( LINE_NUMBER ) {\
@@ -386,6 +396,8 @@
  * @brief Clears the display
  *
  * The display will be cleared and the cursor set to the first position.
+ *
+ * @author Hannes
  */
 #define LCD_CLEAR LCD_CMD_BYTE(  0x01 ); _delay_ms(2)
 
@@ -411,6 +423,8 @@
  * @see LCD_JUMP_LINE_START( LINE_NUMBER )
  * @see lcd_write_line( char *display_text )
  * @see LCD_MAX_CHARS
+ *
+ * @author Hannes
  */
 void lcd_write( char *display_text )
 {
@@ -479,6 +493,8 @@ void lcd_write( char *display_text )
  * @see LCD_JUMP_LINE_START( LINE_NUMBER )
  * @see lcd_write( char *display_text )
  * @see LCD_MAX_CHARS_LINE
+ *
+ * @author Hannes
  */
 void lcd_write_line( char *line_text )
 {
@@ -544,6 +560,8 @@ void lcd_write_line( char *line_text )
  * Clears the amount of characters specified in ::LCD_MAX_CHARS_LINE.
  *
  * @note This does not return the cursor to the beginning of the line. 
+ *
+ * @author Hannes
  */
 #define LCD_CLEAR_LINE lcd_write_line( " " )
 
