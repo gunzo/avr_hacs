@@ -34,6 +34,9 @@
  *
  * If the LED pin is set up as output, the LED will light up.
  *
+ * @pre For this to have some effect, the port for the LED must be set as an
+ *      output. This can be done with ::LED_ACTIVATE
+ *
  * @see LED_ACTIVATE
  * @see LED_OFF
  * @see LED_TOGGLE
@@ -46,6 +49,9 @@
  * @brief Switch LED off
  *
  * If the LED pin is set up as output, the LED will not light up.
+ *
+ * @pre For this to have some effect, the port for the LED must be set as an
+ *      output. This can be done with ::LED_ACTIVATE
  *
  * @see LED_ACTIVATE
  * @see LED_ON
@@ -60,6 +66,9 @@
  *
  * If the LED pin is set up as output, the LED will be toggled, meaning it will
  * be switched off when the LED was on or switch on, when it was off.
+ *
+ * @pre For this to have some effect, the port for the LED must be set as an
+ *      output. This can be done with ::LED_ACTIVATE
  *
  * @see LED_ACTIVATE
  * @see LED_ON
