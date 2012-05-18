@@ -1,0 +1,352 @@
+/*!
+@page requirements Requirements
+
+@section use_cases Use case
+
+	@subsection use_case_spec Specification
+	
+	 <table border="1">
+	 	<tr>
+			<th>
+			    <b>UC1: Apply room settings for a RFID card</b>
+			</th>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Brief description:</b>
+			    User sets the room up by wiping his card over the RFID reader and 
+			    entering a pin.
+			</td>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Actors:</b>
+			    User
+			</td>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Preconditions:</b>
+			    The user must have a valid RFID card.
+			</td>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Main flow:</b>
+				<ol>
+					<li>
+					    The user wipes a valid RFID card over the AVR RFID card reader. He has 
+					    then to key in a 4 digit pin.
+					</li>
+					<li>
+					    ID form the card and pin get send to a HACS server.
+					</li>
+					<li>
+					    HACS software retrieves room information from the database and chooses
+					    the text that should be displayed. Both is send to the AVR RFID card
+					    reader.
+					</li>
+					<li>
+					    The AVR RFID card reader will then set up the room accordingly and 
+					    display the text.
+					</li>
+				</ol>
+			</td>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Postconditions:</b>
+			    The room has a setup according to the settings kept on the HACS 
+			    database for the used RFID card.
+			    
+			</td>
+		</tr>
+	 	<tr>
+			<td>
+			    <b>Alternative flows:</b>
+			    none
+			</td>
+		</tr>
+	 </table>
+
+	 <table border="1">
+	 	<tr>
+			<th>
+			    <b>UC2: Change settings for an ID in the HACS database.</b>
+			</th>
+		</tr>
+	 	<tr>
+			<th>
+			    <b>Actors:</b>
+			    User
+			</th>
+		</tr>
+	 	<tr>
+			<th>
+			    <b>Preconditions:</b>
+			    none
+			</th>
+		</tr>
+	 	<tr>
+			<th>
+			    <b>Main flow:</b>
+			    	<ol>
+					<li>An RFID for the scroll down menu has to be selected.</li>
+					<li>
+					    A button which will retrieve the information from the database 
+					    and display it should be clicked now.
+					</li>
+					<li>In the field Pin, a new pin can be entered.</li>
+					<li>
+					    The Item fields can be changed. Values different form zero shall be 
+					    interpreted as logical ones. Values equal to zero, shall be
+					    interpreted as logical zeros. The user can then turn items on of off.
+					 </li>
+					<li>A button that allows saving the settings should be clicked now.</li>
+					<li>The new values shall be saved in the database.</li>
+				</ol>
+			</th>
+		</tr>
+	 	<tr>
+			<th>
+			    <b>Postconditions:</b>
+			    The new data that is entered by the user is saved in the database.
+			</th>
+		</tr>
+	 	<tr>
+			<th>
+			    <b>Alternative flows:</b>
+			    none
+			</th>
+		</tr>
+	 </table>
+
+	@subsection use_case_diagram Diagram
+
+	 @image html use_case_diagram.png "Use case diagram" width=\textwidth
+	 @image latex use_case_diagram.eps "Use case diagram" width=\textwidth
+
+@section req_given_hardware Given hardware
+ 
+ It is mandatory to use the following hardware for the project. Every part/kit
+ is available in the schools component shop:
+
+ <ul>
+ 	<li>The AVR development board</li>
+ 	<li>The RFID reader</li>
+	<li>One of the LCD (available in two sizes in the component shop)</li>
+	<li>The 16 (hex) button Keypad</li>
+ </ul>
+
+ Additionally need to provide our selfs with a computer, capable of running the java
+ virtual machine. The computer also needs to have a USB port for communication
+ with the rest of the hardware. We use our own computers to fulfil this requirement.
+
+@section req_not_given_hardware Not given hardware
+ 
+ We have to create one or more additional peaces of hardware, using one of LCDs,
+ the hex keypad and an arbitrary number of other components. It is also required
+ to make it possible to control some LEDs depending on the state, the system is
+ in. The result of this requirement is called "CPLD interconnection board."
+
+@section req_non_pc Software for the non computer hardware
+
+ It is required to involve all the given hardware. The micro controller on the
+ AVR development should be the main controller of the non PC part. Additionally,
+ the non computer part must act according to the use case specifications
+ (@ref use_case_spec).
+
+@section req_pc Software for the computer hardware
+
+ An operating system capable of running a java virtual machine must be 
+ installed, as well as a java virtual machine. Additional drivers for the FTDI
+ FT232 converter chip are necessary. 
+ The code we have to program is a server software that fulfills the 
+ requirements defined by the use case specifications (@ref use_case_spec). 
+
+@section req_pc_non_pc Communication between the computer and non computer part
+
+	@subsection req_pc_non_pc_cable Physical connection
+	 
+	 The connection from the computer part to the non computer part shall be
+	 made by a usb cable to the AVR development board. This assumes the usage of
+	 the USB/RS232 converter found on the AVR development board.
+
+	 The transition parameter are defined in the following table:
+
+	 <table border="1">
+	 	<tr>
+			<th><b>Baud rate</b></th>
+			<th><b>Data bits</b></th>
+			<th><b>Start bit</b></th>
+			<th><b>Stop bit</b></th>
+			<th><b>Parity</b></th>
+	 	</tr>
+	 	<tr>
+			<th>19200</th>
+			<th>8</th>
+			<th>1</th>
+			<th>1</th>
+			<th>None</th>
+	 	</tr>
+	 </table>
+		
+
+
+	@subsection req_pc_non_pc_cable High level communication
+
+	 On top of the low level connection (USB, RS232), a packet based protocoll shall
+	 be implemented. The frame for this protocol is defined here.
+
+	 <b>Frame</b>
+
+	 <table border="1">
+	 	<tr>
+			<td>Source</td>
+			<td>Destination</td>
+			<td>Data length</td>
+			<td>Command/Status</td>
+			<td>Data[0-N]</td>
+			<td>Checksum</td>
+	 	</tr>
+	</table>
+
+	 <b>Frame description</b>
+
+	 <table border="1">
+	 	<tr>
+			<th><b>Field</b></th>
+			<th><b>Lenght (bytes)</b></th>
+			<th><b>Description</b></th>
+	 	</tr>
+	 	<tr>
+			<td>Source</td>
+			<td>2</td>
+			<td>Identifies the packed source</td>
+	 	</tr>
+	 	<tr>
+			<td>Destination</td>
+			<td>2</td>
+			<td>Identifies the packed destination</td>
+	 	</tr>
+	 	<tr>
+			<td>Data length</td>
+			<td>4</td>
+			<td>Number of data bytes in the packet, ascii encoded</td>
+	 	</tr>
+	 	<tr>
+			<td>Data</td>
+			<td>[0 - 9999]</td>
+			<td>Variable length data field</td>
+	 	</tr>
+	 	<tr>
+			<td>Checksum</td>
+			<td>3</td>
+			<td>
+			    The checksum is found by XOR-ing the the fram but the checksum field.
+			    The checksum has to be encoded with ascii.
+			</td>
+	 	</tr>
+	 </table>
+
+@section req_func Functional requirements
+
+ <ol>
+ 	<li>
+	    The AVR RFID card reader shall prompt for a RFID card and read it when 
+	    present.
+	</li>
+ 	<li>The AVR RFID card reader shall then prompt for a pin.</li>
+ 	<li>The AVR RFID card reader shall read a 4 digit pin.</li>
+ 	<li>The AVR RFID card reader shall have a hex kepad to enter the pin.</li>
+	<li>The AVR RFID card reader shall display information from the HACS server</li>
+	<li>
+	    The AVR RFID card reader shall switch ports high or low, according to 
+	    information from the HACS server. The ports must be accessible with a
+	    standard connector.
+	</li>
+	<li>
+	    The HACS server shall have a graphical user interface to change RFID card
+	    related information in the database.
+	</li>
+ </ol>
+
+@section req_non_func Non functional requirements
+
+ <ol>
+ 	<li>
+	    The AVR RFID card reader and the HACS server shall be connected to each 
+	    other via a USB to RS232 adapter (see @ref req_pc_non_pc).
+	</li>
+ 	<li>
+	    The AVR RFID card reader shall use this connection to send ID for a RFID
+	    card and pin to the HACS server.
+	</li>
+ 	<li>
+	    The HACS server shall receive information form the AVR RFID card reader
+	    and extract ID and pin.
+	</li>
+ 	<li>
+	    The HACS server shall retrieve information related to the ID from the 
+	    HACS database. 
+	</li>
+	<li>
+	    The HACS server shall create a package to be send back to the AVR reader.
+	    If ID and pin where correct, appropriate Display text and room setup 
+	    information have to be send to the AVR RFID card reader.
+	    If ID or pin where not correct, appropriate Display text has to be send to
+	    the AVR RFID card reader.
+	</li>
+	<li>
+	    AVR RFID card reader shall extract text for the display and display it. In
+	    case a room setup was send, the corresponding ports have to be set up
+	    accordingly.
+	</li>
+ </ol>
+
+@section req_trace_matrix Requierments tracing matrix
+
+ <table border="1">
+ 	<tr>
+		<td></td>
+		<td>Use case 1</td>
+		<td>Use case 2</td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 1</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 2</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 3</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 4</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 5</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 6</td>
+		<td>X</td>
+		<td></td>
+ 	</tr>
+ 	<tr>
+		<td>Requierment 7</td>
+		<td></td>
+		<td>X</td>
+ 	</tr>
+ </table>
+
+*/

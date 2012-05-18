@@ -1,0 +1,132 @@
+/*! @mainpage Home Automation Control System
+
+@section intro_sec Introduction
+
+ This project aims to implement a very fast and straight forward way to do
+ basic operations on a electrical equipment in a single room. This room is used
+ sequentially by different people who wish to have their own setup when they use
+ the room.
+	
+	@subsection basic_setup Basic setup capabilities
+
+	 The system is able to do basic operations on electrical equipment, for example
+	 switching the power on for an electrical device or create a short circuit
+	 between two pins (This is needed to switch a computer on). 
+
+	@subsection authent Authentication
+
+	 Users will be able to activate their profile based on ID cards they recive as
+	 part of the Home Automation Control System. After a short setup phase on the
+	 computer side of this project, the user can wipe the card on the provided RFID
+	 reader and enter a pin. If the information is correct, the settings for this
+	 card will be applied.
+
+	@subsection security Security
+
+	 This system has very low security demands, since it is assumed that the
+	 parties sharing the room know and trust each other. A four digit pin is
+	 required to render abuse of the system by third parties harder. The
+	 implemented level of security can not be considered to be more than a
+	 help for the users not to activate the wrong settings, in case cards
+	 where mixed. This helps to reassure that no device is turned on without the
+	 knowledge of the actual beneficiary of one or more devices. This might result
+	 in some power savings and keep user from frustration of possibly having to
+	 deal with electrical devices they otherwise never use and are unsure on how
+	 to operate them.
+
+@section risks Risk management
+ <table border="1">
+	<tr>
+		<th>Risk</th>
+		<th>Probability</th>
+		<th>Impact</th>
+		<th>How to relieve the risk</th>
+	</tr>
+	<tr>
+		<th>Lack of knowledge among software developers</th>
+		<th>High</th>
+		<th>Medium</th>
+		<th>
+			<ul>
+		    		<li>Education, courses</li>
+		    		<li>Get help from the teacher</li>
+			</ul>
+		</th>
+	</tr>
+	<tr>
+		<th>Serial communication between the AVR Reader and HAC server</th>
+		<th>High</th>
+		<th>High</th>
+		<th>
+			<ul>
+		    		<li>Use library classes given by the teacher</li>
+		    		<li>Build a prototype</li>
+			</ul>
+		</th>
+	</tr>
+	<tr>
+		<th>
+		    Within the Team the following issues are present:
+			<ul>
+		    		<li>The individual Team member doesn’t know hers/his role.</li>
+		    		<li>Power struggles among Team members.</li>
+			</ul>
+		</th>
+		<th>Medium</th>
+		<th>High</th>
+		<th>
+			<ul>
+		    		<li>Team building</li>
+		    		<li>
+				    Writing clear declaration of own work document + agreeing upon rules
+				    that need to be followed and penalties for not respecting the rules 
+				    and the other members of the group
+				</li>
+		    		<li>Ask the teacher for help</li>
+			</ul>
+		</th>
+	</tr>
+ </table>
+ <table border="1">
+	<tr>
+		<th>Loss of equipment</th>
+		<th>Low</th>
+		<th>Low</th>
+		<th>
+			<ul>
+		    		<li>Fetch new component from the component shop</li>
+			</ul>
+		</th>
+	</tr>
+	<tr>
+		<th>Loss of data</th>
+		<th>Medium</th>
+		<th>High</th>
+		<th>
+			<ul>
+		    		<li>Save often!</li>
+		    		<li>
+				    Make sure that the information is being shared among all the
+				    members
+				</li>
+		    		<li>Use online storage programs/sites</li>
+			</ul>
+		</th>
+	</tr>
+	<tr>
+		<th>Change of requirements</th>
+		<th>High</th>
+		<th>Medium</th>
+		<th>
+			<ul>
+		    		<li>
+				    Discuss in the group and start working on the new stuff as soon as
+				    possible
+				</li>
+			</ul>
+		</th>
+	</tr>
+ </table>
+*/
+
+

@@ -1,8 +1,0 @@
-/*! 
-@page hardware_soft Non PC software
-
- In this part of the documentation, we will descripe the code we wrote for the 
- hardware part. Next to some code for the CPLD interconnection board, most of
- the code was written for the AVR development board.
-
-*/
