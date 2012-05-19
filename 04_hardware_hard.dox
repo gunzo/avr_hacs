@@ -110,6 +110,11 @@
 			 The schematic does not show the 26 pin connector for peripherals. 
 			 See @ref avr_conn
 
+			@subsucsection avr_pic
+
+		 	 @image html avr_developement_board_pic.png "Picture of the AVR decelopment board"
+		 	 @image latex avr_developement_board_pic.eps "Picture of the AVR decelopment board" width=\textwidth
+
 			@subsubsection avr_conn AVR development board connector pinout
 
 			 <table border="1">
@@ -395,8 +400,6 @@
 
 			@subsubsection cpld_layout Layout
 
-			 
-
 			 @anchor cpld_layout_top <b>Layout top layer</b>
 
 		 	 @image html cpld_interconnection-Component.png "CPLD interconnection board layout top"
@@ -405,23 +408,38 @@
 			 On the top layer, mainly the display connetions and some power lines are 
 			 routed. 
 
-			 @anchor cpld_layout_bottom <b>Layout top layer</b>
+			 @anchor cpld_layout_bottom <b>Layout bottom layer</b>
 
 		 	 @image html cpld_interconnection-Copper.png "CPLD interconnection board layout bottom"
 		 	 @image latex cpld_interconnection-Copper.eps "CPLD interconnection board layout bottom" width=\textwidth
-			 
+
 			 On the bottom layer, the connections from the CPLD board to the different 
 			 connectors is dominant. On this layer, we can also find all smd components.
 
-			 @anchor cpld_layout_bottom <b>Layout top layer 3D</b>
+			 @anchor cpld_layout_top_3d <b>Layout top layer 3D</b>
 
 		 	 @image html cpld_interconnection_top_3D.png "CPLD interconnection board layout top 3D"
-		 	 @image latex cpld_interconnection_top_3D.eps "CPLD interconnection board layout bottom" width=\textwidth
+		 	 @image latex cpld_interconnection_top_3D.eps "CPLD interconnection board layout top 3D" width=\textwidth
 
-			 @anchor cpld_layout_bottom <b>Layout bottom layer 3D</b>
+			 The 3D view is from an updated layout version, since the layout was improved
+			 as soon as errors or design flaws where found and no 3D view schreenshot of
+			 the original baord was made.
+
+			 @anchor cpld_layout_bottom_3d <b>Layout bottom layer 3D</b>
 
 		 	 @image html cpld_interconnection_bottom_3D.png "CPLD interconnection board layout bottom 3D"
-		 	 @image latex cpld_interconnection_bottom_3D.eps "CPLD interconnection board layout bottom" width=\textwidth
+		 	 @image latex cpld_interconnection_bottom_3D.eps "CPLD interconnection board layout bottom 3D" width=\textwidth
+
+			 The 3D view is from an updated layout version, since the layout was improved
+			 as soon as errors or design flaws where found and no 3D view schreenshot of
+			 the original baord was made.
+
+			@subsubsection cpld_pic Finished board
+
+			 Here you can see a picture of the finished PCB board.
+
+		 	 @image html cpld_interconnection_board_pic.png "Picture of the CPLD interconnection board"
+		 	 @image latex cpld_interconnection_board_pic.eps "Picture of the CPLD interconnection board" width=\textwidth
 
 			@subsubsection cpld_ref_foot Reference and footprint relation
 			 
@@ -468,7 +486,7 @@
 
 			 \b Note: pins needed for the communication with the RFID reader should not
 			 be touched by the CPLD chip. A list of pins needed for this can be found
-			 here: @ref rfid-detail.
+			 here: @ref rfid_pinout.
 
 			 <table border="1">
 			 	<tr>
@@ -838,7 +856,7 @@
 				</tr>
 			 </table>
 
-		@subsection rfid-detail RFID reader (Only important information)
+		@subsection rfid_detail RFID reader (Only important information)
 
 		 In our project, the RFID reader is a given module with a defined interface.
 		 The reader has an RFID module mounted, but we do not access it directly.
@@ -847,43 +865,54 @@
 		 with the Atmega32 on the AVR development board. No additional hardware is
 		 needed.
 
-		 Here is a table of the connections we need from the AVR development board
-		 connector to communicate with the RFID reader:
+			@subsection rfid_pinout Important connections
 
-		 <table border="1">
-		 	<tr>
-				<th><b>AVR development board connector pin</b></th>
-				<th><b>Used by the RFID reader for</b></th>
-		 	</tr>
-		 	<tr>
-				<td>10</td>
-				<td>SPI comunication / slave select</td>
-		 	</tr>
-		 	<tr>
-				<td>12</td>
-				<td>SPI comunication / SPI MOSI</td>
-		 	</tr>
-		 	<tr>
-				<td>14</td>
-				<td>SPI comunication / SPI MISO</td>
-		 	</tr>
-		 	<tr>
-				<td>16</td>
-				<td>SPI comunication / SPI clock</td>
-		 	</tr>
-		 	<tr>
-				<td>18</td>
-				<td>card present signal</td>
-		 	</tr>
-		 	<tr>
-				<td>20</td>
-				<td>SPI data ready signal</td>
-		 	</tr>
-		 </table>
+			 Here is a table of the connections we need from the AVR development board
+			 connector to communicate with the RFID reader:
 
-		 The data sheet for the RFID reader contains information about protocols and
-		 setup. It can be found on campus net and is named: 
-		 "RFID-Reader_Datasheet_slave.pdf". In the data sheet, the chapter which 
-		 probably is of most interest is: </b> 6. Documentation for the interface to
-		 the ATmega8 </b>.
+			 <table border="1">
+			 	<tr>
+					<th><b>AVR development board connector pin</b></th>
+					<th><b>Used by the RFID reader for</b></th>
+			 	</tr>
+			 	<tr>
+					<td>10</td>
+					<td>SPI comunication / slave select</td>
+			 	</tr>
+			 	<tr>
+					<td>12</td>
+					<td>SPI comunication / SPI MOSI</td>
+			 	</tr>
+			 	<tr>
+					<td>14</td>
+					<td>SPI comunication / SPI MISO</td>
+			 	</tr>
+			 	<tr>
+					<td>16</td>
+					<td>SPI comunication / SPI clock</td>
+			 	</tr>
+			 	<tr>
+					<td>18</td>
+					<td>card present signal</td>
+			 	</tr>
+				 	<tr>
+					<td>20</td>
+					<td>SPI data ready signal</td>
+			 	</tr>
+			 </table>
+
+			 The data sheet for the RFID reader contains information about protocols and
+			 setup. It can be found on campus net and is named: 
+			 "RFID-Reader_Datasheet_slave.pdf". In the data sheet, the chapter which 
+			 probably is of most interest is: </b> 6. Documentation for the interface to
+			 the ATmega8 </b>.
+
+			
+			@subsubsection rfid_pic Board
+
+			 Here you can see a picture of the RFID reader board.
+
+		 	 @image html rfid_card_reader_pic.png "Picture of the RFID card reader"
+		 	 @image latex rfid_card_reader_pic.eps "Picture of the RFID card reader" width=\textwidth
+
 */
