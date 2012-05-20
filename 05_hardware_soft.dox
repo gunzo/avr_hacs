@@ -1,0 +1,7 @@
+/*! 
+@page hardware_soft AVR development board code overview
+
+ This part of the documentation gives a structural overview over the code
+ writen for the AVR development board.
+
+*/

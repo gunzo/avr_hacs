@@ -1,0 +1,40 @@
+/*!
+@page testing_c C tests
+
+@section display_test Display test
+ 
+ The file ::display_test.c tests all macros and funktions in ::display.h . To
+ understand the tests, please read the comments in ::display_test.c. The
+ comments guide through the test. They have the following structure:
+
+
+ # TEST {number}
+ #
+ # Wath is tested: {description}
+ #
+ # {Description on how it works and what might be seen in some cases.}
+
+ Here are pictures form a successfull test run. The pictures are in order.
+
+ @image html disp_test_1.png "Picture of successful TEST 1"
+ @image latex disp_test_1.eps "Picture of successful TEST 1" width=\textwidth
+
+ @image html disp_test_2.png "Picture of successful TEST 2"
+ @image latex disp_test_2.eps "Picture of successful TEST 2" width=\textwidth
+
+ @image html disp_test_3.png "Picture of successful TEST 3"
+ @image latex disp_test_3.eps "Picture of successful TEST 3" width=\textwidth
+
+ @image html disp_test_4.png "Picture of successful TEST 4"
+ @image latex disp_test_4.eps "Picture of successful TEST 4" width=\textwidth
+
+ @image html disp_test_5.png "Picture of successful TEST 5"
+ @image latex disp_test_5.eps "Picture of successful TEST 5" width=\textwidth
+
+ @image html disp_test_6.png "Picture of successful TEST 6"
+ @image latex disp_test_6.eps "Picture of successful TEST 6" width=\textwidth
+
+ @image html disp_test_7.png "Picture of successful TEST 7"
+ @image latex disp_test_7.eps "Picture of successful TEST 7" width=\textwidth
+
+*/

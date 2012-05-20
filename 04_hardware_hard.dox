@@ -1,0 +1,918 @@
+/*! @page hardware_hard Hardware description
+
+ The hardware part manly consists of 3 modules. The computer needed for the
+ HACS server is not discussed here since it is a finished system, that
+ does not need more work or elaboration from our side. The 3 modules are
+ therefore the RFID reader, the CPLD interconnection board and the AVR 
+ development board. The AVR development board is the core of the hardware
+ system. It communicates with the hacs server computer and controls the RFID
+ reader as well the CPLD interconnection board.
+
+	@section block_diagrams Hardware block diagrams
+
+		@subsection overview_block Overview
+
+		 @image html hardware_block_diagram_overview.png "Hardware block diagram"
+		 @image latex hardware_block_diagram_overview.eps "Hardware block diagram" width=\textwidth
+
+		 Above we can see an overview of all three hardware modules. It is also
+		 indicated, that the AVR development board is connected to a computer through
+		 a USB connection. The three hardware modules are connected to each other via
+		 a 26 pin ribbon cable. The cable has no logic and simply loops the 
+		 connectors through all free boards.
+
+		@subsection avr_block AVR development board
+
+		 @image html hardware_block_diagram_avr.png "AVR block diagram"
+		 @image latex hardware_block_diagram_avr.eps "AVR block diagram" width=\textwidth
+
+		 Irrelevant components have been omitted.
+		 The AVR development board is an AVR-P40-USB-8535 from Olimex. The board was
+		 equipped with a 26 pin connector. 
+		 The block diagram shows the AVR development board with all relevant
+		 components on them. The heart of the board is the AVR Atmega32 micro 
+		 controller. The micro controller is connected to the CPLD interconnection
+		 board and the RFID reader via a ribbon cable. Additionally, the Atmega32
+		 micro controller can communicate with a computer. To do so, the FTDI 
+		 FT232 interface chip is used. It interfaces between simple RS232 
+		 communication (no handshaking is used) with the micro controller and USB
+		 communication with the computer. An LED and a push button on the board can
+		 be used for limited interaction with the micro controller.
+
+		@subsection cpld_block CPLD interconnection board
+
+		 @image html hardware_block_diagram_cpld.png "CPLD block diagram"
+		 @image latex hardware_block_diagram_cpld.eps "CPLD block diagram" width=\textwidth
+
+		 The block diagram above is not accurate to scale, but it can be used to find
+		 the corresponding components on the real board. Dashed lines mean, that the
+		 represented connections or elements are hidden by either the hex keypad or 
+		 the 4 segment display. Both are represented by a lightly greyed area and
+		 their connectors are not dashed. The default jumper positions are marked by a
+		 darker greyed area. Connections are represented by lines with arrows on each 
+		 end. Connections with numbers are buses with a broadness represented by the 
+		 number. To clarify the meaning of jumper positions, connection lines start
+		 from the actual pin and indicate to which pin or entity they are connected
+		 to. Power lines and power related modules are not considered.
+
+		 The CPLD interconnection board was designed to connect and give the ability
+		 to connect different hardware components to the AVR development board. Two
+		 of the most important hardware modules are located directly on the CPLD
+		 interconnection board: The 4 Line display (DEM20485) and a hex keypad. 
+		 The display is directly connected to the AVR development board via the 
+		 AVR development board connector. The hex keypad is connected to the CPLD
+		 chip. This allows either to just tunnel the connector for the hex keypad
+		 through to the AVR development board, or to gather and pre-process information
+		 from the hex keypad before they are send to the AVR development board.
+
+		 Additionally, the CPLD chip allows to access all the extension connectors
+		 (for example via multiplexing), the LED's and the buttons. 
+
+		@subsection rfid_block RFID reader
+
+		 @image html hardware_block_diagram_rfid.png "RFID block diagram"
+		 @image latex hardware_block_diagram_rfid.eps "RFID block diagram" width=\textwidth
+
+		 The size of the shown buses could not be determined doubtlessly by reading 
+		 the data sheet. Therefore, no buss numbers are provided. To communicate with
+		 the AVR development board, 6 lines are used.
+
+		 The diagram shows the three blocks of the RFID reader used by us. The RFID
+		 Antenna is driven by a RFID module. The RFID module interfaces with the
+		 micro controller. In our case, the micro controller was programed for us
+		 to be able to interface with the AVR development board. This happens over
+		 the AVR development board connector. 
+
+	@section hardware_detail Detailed description
+
+	 In this section, we will take a closer and more complete look at the
+	 hardware. The focus will though lie on the CPLD interconnection board since
+	 this was designed and produced by the group.
+
+	 	@subsection avr_detail AVR development board
+
+			The AVR development board is a Olimex AVR-P40-USB-8535 equiped with a 
+			Atmega32 micro controller. Feature wise, we mainly use the FTDI FT232 
+			USB/RS232 converter to establish a connection between the micro 
+			controller and a computer over a usb cable. As a convenient side effect, the
+			AVR development board as well as all the peripherals to it can be power by 
+			this usb connection. To be able to connect these peripherals, a 26 pin
+			connector was soldered to the board and the Atmega32.
+
+			More information about the bare board can be found here:
+			http://www.olimex.com/dev/avr-p40-usb-8535.html
+
+			@subsubsection avr_schematic Schematic
+
+		 	 @image html avr-p40-usb-a-sch.png "AVR board schematic"
+		 	 @image latex avr-p40-usb-a-sch.eps "AVR board schematic" width=\textwidth
+
+			 The schematic does not show the 26 pin connector for peripherals. 
+			 See @ref avr_conn
+
+			@subsucsection avr_pic
+
+		 	 @image html avr_developement_board_pic.png "Picture of the AVR decelopment board"
+		 	 @image latex avr_developement_board_pic.eps "Picture of the AVR decelopment board" width=\textwidth
+
+			@subsubsection avr_conn AVR development board connector pinout
+
+			 <table border="1">
+			 	<tr>
+			 		<th><b>Used for</b></th>
+			 		<th><b>AVR</b></th>
+			 		<th><b>Pin</b></th>
+			 		<th><b>Pin</b></th>
+			 		<th><b>AVR</b></th>
+			 		<th><b>Used for</b></th>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Port_A bit 0</td>
+			 		<td>1</td>
+			 		<td>2</td>
+			 		<td>Port_B bit 0</td>
+			 		<td>AVR kit red LED out</td>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Port_A bit 1</td>
+			 		<td>3</td>
+			 		<td>4</td>
+			 		<td>Port_B bit 1</td>
+			 		<td></td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD RS</td>
+			 		<td>Port_A bit 2</td>
+			 		<td>5</td>
+			 		<td>6</td>
+			 		<td>Port_B bit 2</td>
+			 		<td>Interrupt 2</td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD EN</td>
+			 		<td>Port_A bit 3</td>
+			 		<td>7</td>
+			 		<td>8</td>
+			 		<td>Port_B bit 3</td>
+			 		<td></td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD D4</td>
+			 		<td>Port_A bit 4</td>
+			 		<td>9</td>
+			 		<td>10</td>
+			 		<td>Port_B bit 4</td>
+			 		<td>SPI SS / Start button</td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD D5</td>
+			 		<td>Port_A bit 5</td>
+			 		<td>11</td>
+			 		<td>12</td>
+			 		<td>Port_B bit 5</td>
+			 		<td>SPI MOSI</td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD D6</td>
+			 		<td>Port_A bit 6</td>
+			 		<td>13</td>
+			 		<td>14</td>
+			 		<td>Port_B bit 6</td>
+			 		<td>SPI MISO</td>
+			 	</tr>
+			 	<tr>
+			 		<td>LCD D7</td>
+			 		<td>Port_A bit 7</td>
+			 		<td>15</td>
+			 		<td>16</td>
+			 		<td>Port_B bit 7</td>
+			 		<td>SPI clock</td>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Port_C bit 6</td>
+			 		<td>17</td>
+			 		<td>18</td>
+			 		<td>Port_D bit 2</td>
+			 		<td>Interrupt 0 / Card present</td>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Port_C bit 7</td>
+			 		<td>19</td>
+			 		<td>20</td>
+			 		<td>Port_D bit 3</td>
+			 		<td>Interrupt 1 / SPI data ready</td>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Port_D bit 6</td>
+			 		<td>21</td>
+			 		<td>22</td>
+			 		<td>Port_D bit 4</td>
+			 		<td></td>
+			 	</tr>
+			 	<tr>
+			 		<td>Timer 2 out</td>
+			 		<td>Port_D bit 7</td>
+			 		<td>23</td>
+			 		<td>24</td>
+			 		<td>Port_D bit 5</td>
+			 		<td>Timer 1 out</td>
+			 	</tr>
+			 	<tr>
+			 		<td></td>
+			 		<td>Ground</td>
+			 		<td>25</td>
+			 		<td>26</td>
+			 		<td>VCC + 5 V</td>
+			 		<td></td>
+			 	</tr>
+				</table>
+
+			@subsubsection avr_boot Programming for the Atmega32
+			 
+			 @b Windows
+			 The Atmega32  can be programmed in several ways. The supported way is to
+			 use the windows tool AVRupload available on campusnet. This tool uses the
+			 usb/RS232 converter on the AVR development board to communicate with the 
+			 Atmega32. For this to work, the correct boot loader must have been uploaded
+			 to the Atmega32. This is normaly the case when an AVR development board is
+			 retrieved from the component shop. The Bootloader will not be on the
+			 Atmega32 when a new chip is fetched form the shop. One of the supervisors
+			 will be able to programm the bootloader.
+
+			 @b Linux
+			 Using the windows tool might also work in wine or dosbox, but was not
+			 tested by us. 
+			 
+			 A native and reliably working tool is avrdude (http://www.nongnu.org/avrdude/).
+			 The downside is, that it needs some hardware. This is either one of the
+			 compatible ICSP or JTAG cables. AVR ICSP usb programmer cables are easily 
+			 found on the internet. If you are lucky and have a LTP printer or serial 
+			 port on your computer, you can also very cheap build a programmer from this
+			 page: http://avrprogrammers.com/
+
+			 In my case, I had a LTP printer port on my dated laptop. I decided to build
+			 the Parallel 5 programmer (http://avrprogrammers.com/bld-avr-parallel-programmer-5.php).
+			 One of the main problems was to find a suitable buffer with timings close
+			 enough to the one used on the website. After going through many data sheets
+			 I found a suitable one in the component shop. If someone would like to
+			 rebuild my version, the buffers type is: 74LS365.
+
+			 Here are some pictures that might be usefull:
+
+		 	 @image html parallel_5.png  "Parallel 5 schematic"
+		 	 @image latex parallel_5.eps "Parallel 5 schematic" width=\textwidth
+
+			 Note that the resistors R1 and R2 have been lowered and increased 
+			 respectively to get a low enough voltage to compile with with TTL 
+			 standards. The programmen was not working with the original values for R1
+			 (330) and R2 (10K).
+
+		 	 @image html parallel_5-Solder.png  "Parallel 5 solder layer"
+		 	 @image latex parallel_5-Solder.eps "Parallel 5 solder layer" width=\textwidth
+
+			 The layout is not too big thanks to using smd resistor instead of normal 
+			 ones.
+			 
+		@subsection cpld-detail CPLD interconnection board
+
+			The purpose of the CPLD interconnection board is to provide a flexible way
+			to connect several extension modules to the AVR kit. It also holds the 4 line
+			Display and the 16 (hex) keys keypad.
+
+			The idea is to use a CPLD chip to add hardware on demand. This hardware can
+			be used to provide some functionality for the extension connectors that would
+			otherwise not me available. Examples for such hardware can be PWM generators,
+			multiplexers, serial or parallel interfaces and so on. All of the mentioned 
+			can be used to take better advantage of the few lines from the AVR 
+			development board which are not reserved for other use. Expect for the 
+			display connections, all lines, including the ones reserved for a certain 
+			purpose (see \ref avr_conn), are connected to the CPLD chip. This
+			allows to quickly adapt to changes in the AVR connection scheme. Also, 
+			reserved connections can be propagated or remapped on the ARV development 
+			board connector or on the extension headers.
+
+			The cpld chip we use is the Xilinx XC9572 in the PLCC84 package. It is a
+			bigger package version of the chip we used in the first semester dice
+			project for the vkete class: XC9572 in a PLCC44 package.
+
+			@subsubsection cpld_schematic Schematic
+
+		 	 @image html cpld_interconnection.png "CPLD interconnection board schematic"
+		 	 @image latex cpld_interconnection.eps "CPLD interconnection board schematic" width=\textwidth
+
+			 On the schematic it gets obvious that the CPLD chip is the heard of the 
+			 CPLD interconnection board. Almost every other part is connected to it.
+			 This is also true for the layout. Therefore, many connections have
+			 been adjusted to make routing significantly easier.
+			 
+			 The following table gives a description of some important parts in the 
+			 schematic:
+
+			@anchor cpld_schematic_table
+			 <table border="1">
+			 	<tr>
+			 		<th><b>Position : Reference : Name</b></th>
+			 		<th colspan="3"><b>Description</b></th>
+			 	</tr>
+			 	<tr>
+			 		<td>A4 : P6 : AVR-KIT_CON</td>
+			 		<td>
+					    This connector is referred to as AVR development board connector.
+					    The pins that need to go to the display are directly connected to
+					    it. Worth mentioning is also, that the spi clock (pin 16) is 
+					    connected to the second global clock bin on the CPLD chip. This 
+					    would allow easier spi and more reliable hardware implementation. 
+					    The timer 1 output (pin 24) can be either connected to a normal
+					    pin on the CPLD or to the global clock 3 pin. It must be mentioned
+					    that all pins described here can also provide normal port
+					    functionality.
+					</td>
+			 	</tr>
+			 	<tr>
+			 		<td>B4 : K6 : tmr1_3pin</td>
+			 		<td>
+					    This is a jumper which can be used to connect pin 24 from the AVR
+					    development board to either the global clock 3 pin or pin 19 on the
+					    CPLD chip.
+
+					    <p>Jumper on pin 1/2: Timer 1 -> GCK3</p>
+					    <p>Jumper on pin 2/3: Timer 1 -> I/O 19</p>
+					</td>
+			 	</tr>
+			 	<tr>
+			 		<td>B4 : K6 : pwr_sel_3pin</td>
+			 		<td>
+					    This is a jumper which can be used to switch between power from the 
+					    AVR development board connector or an external power supply. Power
+					    from an external source will never interfere with the Power supplied
+					    by the AVR development connector.
+
+					    <p>Jumper on pin 1/2: Power from AVR development board connector</p>
+					    <p>Jumper on pin 2/3: Power from external connector</p>
+					</td>
+			 	</tr>
+			 </table>
+
+			 <table border="1">
+			 	<tr>
+			 		<td>A1/2 : U3 : OSCI_NC_GND_0_5V</td>
+			 		<td>
+					    This is a standalone oscillator. The CPLD does not have an oscillator
+					    circuit of any kind in it. This standalone oscillator is a convenient
+					    way to get the possibility to have sequential logic without dependency
+					    on modules external to the CPLD interconnection board. The frequency
+					    should be as low as possible to not unnecessarily waste flip flops
+					    when trying to achieve delays in the milliseconds range.
+
+					    <p>Jumper on pin 1/2: Power from AVR development board connector</p>
+					    <p>Jumper on pin 2/3: Power from external connector</p>
+					</td>
+			 	</tr>
+			 	<tr>
+			 		<td>B1 : SW{1,2,3} : SW_PUSH_SMALL</td>
+			 		<td>
+					    All three push buttons are for convenience active high.
+					</td>
+			 	</tr>
+			 	<tr>
+			 		<td>B1 : D{1,2,3} : LED</td>
+			 		<td>
+					    All three LED's are for convenience active high.
+					</td>
+			 	</tr>
+			 	<tr>
+			 		<td>A5 : U2 : LM7805</td>
+			 		<td>
+					    The LM7805 is a 5 volt voltage regulator. It will ensure a stable
+					    voltage for the components on the CPLD interconnection board.  
+					</td>
+			 	</tr>
+			 </table>
+
+			 Other components found in the schematic are connected in a simple way. They
+			 don't realy have an unexpected behaviour.
+			 This is also true for the hex keypad (B4 : P4 : Keypad_8pin).
+
+			@subsubsection cpld_layout Layout
+
+			 @anchor cpld_layout_top <b>Layout top layer</b>
+
+		 	 @image html cpld_interconnection-Component.png "CPLD interconnection board layout top"
+		 	 @image latex cpld_interconnection-Component.eps "CPLD interconnection board layout top" width=\textwidth
+
+			 On the top layer, mainly the display connetions and some power lines are 
+			 routed. 
+
+			 @anchor cpld_layout_bottom <b>Layout bottom layer</b>
+
+		 	 @image html cpld_interconnection-Copper.png "CPLD interconnection board layout bottom"
+		 	 @image latex cpld_interconnection-Copper.eps "CPLD interconnection board layout bottom" width=\textwidth
+
+			 On the bottom layer, the connections from the CPLD board to the different 
+			 connectors is dominant. On this layer, we can also find all smd components.
+
+			 @anchor cpld_layout_top_3d <b>Layout top layer 3D</b>
+
+		 	 @image html cpld_interconnection_top_3D.png "CPLD interconnection board layout top 3D"
+		 	 @image latex cpld_interconnection_top_3D.eps "CPLD interconnection board layout top 3D" width=\textwidth
+
+			 The 3D view is from an updated layout version, since the layout was improved
+			 as soon as errors or design flaws where found and no 3D view schreenshot of
+			 the original baord was made.
+
+			 @anchor cpld_layout_bottom_3d <b>Layout bottom layer 3D</b>
+
+		 	 @image html cpld_interconnection_bottom_3D.png "CPLD interconnection board layout bottom 3D"
+		 	 @image latex cpld_interconnection_bottom_3D.eps "CPLD interconnection board layout bottom 3D" width=\textwidth
+
+			 The 3D view is from an updated layout version, since the layout was improved
+			 as soon as errors or design flaws where found and no 3D view schreenshot of
+			 the original baord was made.
+
+			@subsubsection cpld_pic Finished board
+
+			 Here you can see a picture of the finished PCB board.
+
+		 	 @image html cpld_interconnection_board_pic.png "Picture of the CPLD interconnection board"
+		 	 @image latex cpld_interconnection_board_pic.eps "Picture of the CPLD interconnection board" width=\textwidth
+
+			@subsubsection cpld_ref_foot Reference and footprint relation
+			 
+			 The reference is indicated by the comp keyword, the footprint by the module
+			 keyword.
+
+			 <p>comp = "C2" module = "SM1206"</p>
+			 <p>comp = "C3" module = "SM1206"</p>
+			 <p>comp = "C4" module = "SM1206"</p>
+			 <p>comp = "C5" module = "SM1206"</p>
+			 <p>comp = "C6" module = "SM1206"</p>
+			 <p>comp = "C7" module = "SM1206"</p>
+			 <p>comp = "C8" module = "SM1206"</p>
+			 <p>comp = "D1" module = "LED-5MM"</p>
+			 <p>comp = "D2" module = "LED-5MM"</p>
+			 <p>comp = "D3" module = "LED-5MM"</p>
+			 <p>comp = "K1" module = "SIL-3"</p>
+			 <p>comp = "K2" module = "SIL-3"</p>
+			 <p>comp = "P1" module = "SIL-2"</p>
+			 <p>comp = "P2" module = "SIL-6"</p>
+			 <p>comp = "P3" module = "he10-10d"</p>
+			 <p>comp = "P4" module = "HEX_KEPAD"</p>
+			 <p>comp = "P5" module = "1pin"</p>
+			 <p>comp = "P6" module = "HE10_26D"</p>
+			 <p>comp = "P7" module = "he10-10d"</p>
+			 <p>comp = "P8" module = "he10-10d"</p>
+			 <p>comp = "R1" module = "SM1206"</p>
+			 <p>comp = "R2" module = "SM1206"</p>
+			 <p>comp = "R3" module = "SM1206"</p>
+			 <p>comp = "R4" module = "SM1206"</p>
+			 <p>comp = "R5" module = "SM1206"</p>
+			 <p>comp = "R6" module = "SM1206"</p>
+			 <p>comp = "SW1" module = "SW_PUSH_SMALL"</p>
+			 <p>comp = "SW2" module = "SW_PUSH_SMALL"</p>
+			 <p>comp = "SW3" module = "SW_PUSH_SMALL"</p>
+			 <p>comp = "U2" module = "DPAK2"</p>
+			 <p>comp = "U3" module = "DIP-14__300_ELL"</p>
+			 <p>comp = "U4" module = "PLCC84"</p>
+			 <p>comp = "U5" module = "DEM20485"</p>
+
+			@subsubsection cpld_pinouts Pinout tables
+
+			 @anchor cpld_pinout_avrconn <b>AVR development board connector</b>
+
+			 \b Note: pins needed for the communication with the RFID reader should not
+			 be touched by the CPLD chip. A list of pins needed for this can be found
+			 here: @ref rfid_pinout.
+
+			 <table border="1">
+			 	<tr>
+					<th><b>AVR development board connector</b></th>
+					<th><b>CPLD chip</b></th>
+					<th><b>4 Line display</b></th>
+				</tr>
+			 	<tr>
+					<td>1</td>
+					<td>2</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>2: AVR developement board red LED</td>
+					<td>1</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>4</td>
+					<td>3</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>3</td>
+					<td>4</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>5: LCD RS</td>
+					<td></td>
+					<td>4: RegSel</td>
+				</tr>
+			 	<tr>
+					<td>6: Interrupt 2</td>
+					<td>5</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>7: LCD EN</td>
+					<td></td>
+					<td>6: EN</td>
+				</tr>
+			 	<tr>
+					<td>8</td>
+					<td>7</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>9: LCD D4</td>
+					<td></td>
+					<td>11: DB4</td>
+				</tr>
+			 	<tr>
+					<td>10: SPI SS / AVR development board push button</td>
+					<td>6</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>11: LCD D5</td>
+					<td></td>
+					<td>12: DB5</td>
+				</tr>
+			 	<tr>
+					<td>12: SPI MOSI</td>
+					<td>11</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>13: LCD D6</td>
+					<td></td>
+					<td>13: DB6</td>
+				</tr>
+			 	<tr>
+					<td>14: SPI MISO</td>
+					<td>13</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>15: LCD D7</td>
+					<td></td>
+					<td>14: DB7</td>
+				</tr>
+			 	<tr>
+					<td>16: SPI CLOCK</td>
+					<td>10: GCK2</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>17: Timer 2 out</td>
+					<td>24</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>18: Interrupt 0 / Card present</td>
+					<td>14</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>19</td>
+					<td>23</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>20: Interrupt 1 / Card data ready</td>
+					<td>17</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>21</td>
+					<td>21</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>22</td>
+					<td>18</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>23</td>
+					<td>20</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>24: Timer 1 out</td>
+					<td>19/GCK3 (see @ref cpld_schematic_table : B4 : K6 : tmr1_3pin )</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>25</td>
+					<td>GND</td>
+					<td></td>
+				</tr>
+			 	<tr>
+					<td>26</td>
+					<td>+5V</td>
+					<td></td>
+				</tr>
+			 </table>
+
+			 @anchor cpld_pinout_keypad <b>Keypad</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>Keypad</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>1</td>
+					<td>25</td>
+				</tr>
+			 	<tr>
+					<td>2</td>
+					<td>26</td>
+				</tr>
+			 	<tr>
+					<td>3</td>
+					<td>31</td>
+				</tr>
+			 	<tr>
+					<td>4</td>
+					<td>32</td>
+				</tr>
+			 	<tr>
+					<td>5</td>
+					<td>33</td>
+				</tr>
+			 	<tr>
+					<td>6</td>
+					<td>34</td>
+				</tr>
+			 	<tr>
+					<td>7</td>
+					<td>35</td>
+				</tr>
+			 	<tr>
+					<td>8</td>
+					<td>36</td>
+				</tr>
+			 </table>
+
+			 @anchor cpld_pinout_header1 <b>Extention connector 1</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>Extention connector 1</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>1</td>
+					<td>37</td>
+				</tr>
+			 	<tr>
+					<td>2</td>
+					<td>39</td>
+				</tr>
+			 	<tr>
+					<td>3</td>
+					<td>40</td>
+				</tr>
+			 	<tr>
+					<td>4</td>
+					<td>41</td>
+				</tr>
+			 	<tr>
+					<td>5</td>
+					<td>43</td>
+				</tr>
+			 	<tr>
+					<td>6</td>
+					<td>44</td>
+				</tr>
+			 	<tr>
+					<td>7</td>
+					<td>45</td>
+				</tr>
+			 	<tr>
+					<td>8</td>
+					<td>46</td>
+				</tr>
+			 	<tr>
+					<td>9</td>
+					<td>47</td>
+				</tr>
+			 	<tr>
+					<td>10</td>
+					<td>48</td>
+				</tr>
+			 </table>
+
+			 @anchor cpld_pinout_header2 <b>Extention connector 2</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>Extention connector 2</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>1</td>
+					<td>50</td>
+				</tr>
+			 	<tr>
+					<td>2</td>
+					<td>51</td>
+				</tr>
+			 	<tr>
+					<td>3</td>
+					<td>52</td>
+				</tr>
+			 	<tr>
+					<td>4</td>
+					<td>53</td>
+				</tr>
+			 	<tr>
+					<td>5</td>
+					<td>54</td>
+				</tr>
+			 	<tr>
+					<td>6</td>
+					<td>55</td>
+				</tr>
+			 	<tr>
+					<td>7</td>
+					<td>56</td>
+				</tr>
+			 	<tr>
+					<td>8</td>
+					<td>57</td>
+				</tr>
+			 	<tr>
+					<td>9</td>
+					<td>58</td>
+				</tr>
+			 	<tr>
+					<td>10</td>
+					<td>61</td>
+				</tr>
+			 </table>
+	
+			 @anchor cpld_pinout_header3 <b>Extention connector 3</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>Extention connector 3</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>1</td>
+					<td>62</td>
+				</tr>
+			 	<tr>
+					<td>2</td>
+					<td>63</td>
+				</tr>
+			 	<tr>
+					<td>3</td>
+					<td>65</td>
+				</tr>
+			 	<tr>
+					<td>4</td>
+					<td>66</td>
+				</tr>
+			 	<tr>
+					<td>5</td>
+					<td>67</td>
+				</tr>
+			 	<tr>
+					<td>6</td>
+					<td>68</td>
+				</tr>
+			 	<tr>
+					<td>7</td>
+					<td>69</td>
+				</tr>
+			 	<tr>
+					<td>8</td>
+					<td>70</td>
+				</tr>
+			 	<tr>
+					<td>9</td>
+					<td>71</td>
+				</tr>
+			 	<tr>
+					<td>10</td>
+					<td>72</td>
+				</tr>
+			 </table>
+	
+			 @anchor cpld_pinout_btn <b>Push buttons</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>Push buttons</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>Button 1</td>
+					<td>81</td>
+				</tr>
+			 	<tr>
+					<td>Button 2</td>
+					<td>80</td>
+				</tr>
+			 	<tr>
+					<td>Button 3</td>
+					<td>79</td>
+				</tr>
+			 </table>
+
+			 @anchor cpld_pinout_led <b>LED</b>
+
+			 <table border="1">
+			 	<tr>
+					<th><b>LED</b></th>
+					<th><b>CPLD chip</b></th>
+				</tr>
+			 	<tr>
+					<td>LED 1</td>
+					<td>84</td>
+				</tr>
+			 	<tr>
+					<td>LED 2</td>
+					<td>83</td>
+				</tr>
+			 	<tr>
+					<td>LED 3</td>
+					<td>81</td>
+				</tr>
+			 </table>
+
+		@subsection rfid_detail RFID reader (Only important information)
+
+		 In our project, the RFID reader is a given module with a defined interface.
+		 The reader has an RFID module mounted, but we do not access it directly.
+		 Instead, an Atmega8 handles all communication with the module for us and
+		 notifies when certain events occur. The RFID reader directly communicates
+		 with the Atmega32 on the AVR development board. No additional hardware is
+		 needed.
+
+			@subsection rfid_pinout Important connections
+
+			 Here is a table of the connections we need from the AVR development board
+			 connector to communicate with the RFID reader:
+
+			 <table border="1">
+			 	<tr>
+					<th><b>AVR development board connector pin</b></th>
+					<th><b>Used by the RFID reader for</b></th>
+			 	</tr>
+			 	<tr>
+					<td>10</td>
+					<td>SPI comunication / slave select</td>
+			 	</tr>
+			 	<tr>
+					<td>12</td>
+					<td>SPI comunication / SPI MOSI</td>
+			 	</tr>
+			 	<tr>
+					<td>14</td>
+					<td>SPI comunication / SPI MISO</td>
+			 	</tr>
+			 	<tr>
+					<td>16</td>
+					<td>SPI comunication / SPI clock</td>
+			 	</tr>
+			 	<tr>
+					<td>18</td>
+					<td>card present signal</td>
+			 	</tr>
+				 	<tr>
+					<td>20</td>
+					<td>SPI data ready signal</td>
+			 	</tr>
+			 </table>
+
+			 The data sheet for the RFID reader contains information about protocols and
+			 setup. It can be found on campus net and is named: 
+			 "RFID-Reader_Datasheet_slave.pdf". In the data sheet, the chapter which 
+			 probably is of most interest is: </b> 6. Documentation for the interface to
+			 the ATmega8 </b>.
+
+			
+			@subsubsection rfid_pic Board
+
+			 Here you can see a picture of the RFID reader board.
+
+		 	 @image html rfid_card_reader_pic.png "Picture of the RFID card reader"
+		 	 @image latex rfid_card_reader_pic.eps "Picture of the RFID card reader" width=\textwidth
+
+*/

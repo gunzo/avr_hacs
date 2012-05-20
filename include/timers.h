@@ -4,8 +4,13 @@
 /** @file
  * @brief Timer access headerfile.
  *
- * Defines macros that allow easyer, but still generic, access to the timers and several of their modes.
- * 
+ * Defines macros that allow easyer, but still generic, access to the timers 
+ * and several of their modes.
+ *
+ * If you are new to this file, you might want to take a look at ::T0_CTC( TOP )
+ * and ::T1_CTC( TOP , COMP_EXTRA ).
+ *
+ * @author Hannes
  */
 
 #ifndef TIMERS_H_INCLUDED
@@ -29,6 +34,8 @@
  * @see T0_START( CLOCKDIVISION )
  * @see T0_COMP_MATCH
  * @see T0_CTC_INT_ON 
+ *
+ * @author Hannes
  */
 #define T0_CTC( TOP ) do{ \
 \
@@ -52,6 +59,8 @@
  * loops. When a compare match between the timer 0 value and OCR0 occured, this
  * will return a logical 1 and a logical 0 otherwise.
  *
+ * @pre A valid value should be set up. This can be done with ::T0_CTC( TOP )
+ *
  * Example:
  * \code
  * if ( T0_COMP_MATCH ) 
@@ -67,6 +76,8 @@
  *
  * @see T0_CTC( TOP )
  * @see T0_COMP_MATCH_CLEAR
+ *
+ * @author Hannes
  */
 #define T0_COMP_MATCH (TIFR & _BV( OCF0 ))
 
@@ -79,6 +90,8 @@
  *
  * @see T0_CTC( TOP )
  * @see T0_COMP_MATCH
+ *
+ * @author Hannes
  */
 #define T0_COMP_MATCH_CLEAR (TIFR |= _BV( OCF0 ))
 
@@ -98,6 +111,7 @@
  * @see T0_CTC(TOP)
  * @see t0_start(uint16_t clockdivision)
  *
+ * @author Hannes
  */
 void t0_ctc(uint8_t top)
 {
@@ -114,6 +128,8 @@ void t0_ctc(uint8_t top)
  * @see T0_CTC( TOP )
  * @see T0_CTC_INT_ON
  * @see t0_ctc_int_off(void)
+ *
+ * @author Hannes
  */
 #define T0_CTC_INT_OFF ( TIMSK &= ~_BV( OCIE0 ) )
 
@@ -129,6 +145,8 @@ void t0_ctc(uint8_t top)
  * @see T0_CTC_INT_OFF
  * @see t0_ctc_int(uint8_t top)
  * @see t0_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 void t0_ctc_int_off(void)
 {
@@ -145,6 +163,8 @@ void t0_ctc_int_off(void)
  * @see T0_CTC( TOP )
  * @see T0_CTC_INT_OFF
  * @see t0_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 #define T0_CTC_INT_ON ( TIMSK |= _BV( OCIE0 ) ) 
 
@@ -160,6 +180,8 @@ void t0_ctc_int_off(void)
  * @see T0_CTC_INT_ON
  * @see T0_CTC_INT_OFF
  * @see t0_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 void t0_ctc_int_on(void)
 {
@@ -172,6 +194,10 @@ void t0_ctc_int_on(void)
  *
  * The timer will be started with the given division factor. See parameter 
  * \b CLOCKDIVISION.
+ * 
+ * @pre You probably want to set up the timer somehow first. If you would like
+ *      to clear the timer on a compare match, you can use ::T0_CTC( TOP ) to
+ *      do so.
  *
  * @param CLOCKDIVISION Dividing factor for the main clock.
  *                      Values are: \b 1 (no division), \b 8, \b 64, \b 256 and
@@ -180,6 +206,8 @@ void t0_ctc_int_on(void)
  *                      will be applied.
  * @see T0_STOP
  * @see t0_start(uint16_t clockdivision)
+ *
+ * @author Hannes
  */
 #define T0_START( CLOCKDIVISION ) do{ \
 	/* Converting CLOCKDIVISION to a binary represation. */\
@@ -219,6 +247,7 @@ void t0_ctc_int_on(void)
  * @param clockdivision 8 bit value at wich the timer will be cleared.
  * @see T0_START( CLOCKDIVISION )
  *
+ * @author Hannes
  */
 void t0_start(uint16_t clockdivision)
 {
@@ -231,6 +260,8 @@ void t0_start(uint16_t clockdivision)
  * The timer will be stopped.
  *
  * @see T0_START( CLOCKDIVISION )
+ *
+ * @author Hannes
  */
 #define T0_STOP (TCCR0 &= ~(_BV( CS02 )|_BV( CS01 )|_BV( CS00 )) )
 
@@ -241,6 +272,8 @@ void t0_start(uint16_t clockdivision)
  * behaviour is exacly the same.
  *
  * @see T0_STOP
+ *
+ * @author Hannes
  */
 void t0_stop()
 {
@@ -258,6 +291,8 @@ void t0_stop()
  *
  * @see T0_START( CLOCKDIVISION )
  * @see T0_STOP
+ *
+ * @author Hannes
  */
 #define T0_RESET ( TCNT0 = 0x00 )
 
@@ -286,6 +321,8 @@ void t0_stop()
  * @see T1_START( CLOCKDIVISION )
  * @see T1_COMP_MATCH_TOP
  * @see T1_CTC_INT_ON
+ *
+ * @author Hannes
  */
 #define T1_CTC( TOP , COMP_EXTRA ) do{ \
 \
@@ -323,6 +360,9 @@ void t0_stop()
  * { ... }
  * \endcode
  *
+ * @pre A valid value should be set up. This can be done with 
+ *      ::T1_CTC( TOP , COMP_EXTRA ). See the @b TOP parameter there.
+ *
  * @note If the ctc mode with timer one is used, the comparsion for clearing
  *       the timer can only happen with Output Compare Register 1 A. So, if the
  *       ctc mode for timer 1 is set up, this is one of the macros to go with.
@@ -333,6 +373,8 @@ void t0_stop()
  *
  * @see T1_CTC( TOP , COMP_EXTRA )
  * @see T1_COMP_MATCH_TOP_CLEAR
+ *
+ * @author Hannes
  */
 #define T1_COMP_MATCH_TOP (TIFR & _BV( OCF1A ))
 
@@ -346,6 +388,8 @@ void t0_stop()
  * @see T1_CTC( TOP , COMP_EXTRA)
  * @see T1_COMP_MATCH_TOP
  * @see T1_COMP_MATCH_EXTRA
+ *
+ * @author Hannes
  */
 #define T1_COMP_MATCH_TOP_CLEAR (TIFR |= _BV( OCF1A ))
 
@@ -366,6 +410,9 @@ void t0_stop()
  * { ... }
  * \endcode
  *
+ * @pre A valid value should be set up. This can be done with 
+ *      ::T1_CTC( TOP , COMP_EXTRA ). See the @b EXTRA parameter there.
+ *
  * @note If the ctc mode with timer one is used, the comparsion for clearing
  *       the timer can only happen with Output Compare Register 1 A. So, if the
  *       ctc mode for timer 1 is set up, this is one of the macros to go with.
@@ -377,6 +424,8 @@ void t0_stop()
  * @see T1_CTC( TOP , COMP_EXTRA )
  * @see T1_COMP_MATCH_EXTRA_CLEAR
  * @see T1_COMP_MATCH_TOP
+ *
+ * @author Hannes
  */
 #define T1_COMP_MATCH_EXTRA (TIFR & _BV( OCF1B ))
 
@@ -390,6 +439,8 @@ void t0_stop()
  * @see T1_CTC( TOP , COMP_EXTRA)
  * @see T1_COMP_MATCH_EXTRA
  * @see T1_COMP_MATCH_TOP
+ *
+ * @author Hannes
  */
 #define T1_COMP_MATCH_EXTRA_CLEAR (TIFR |= _BV( OCF1B ))
 
@@ -414,6 +465,7 @@ void t0_stop()
  * @see T1_CTC(TOP)
  * @see t1_start(uint16_t clockdivision)
  *
+ * @author Hannes
  */
 void t1_ctc(uint16_t top , uint16_t comp_extra)
 {
@@ -430,6 +482,8 @@ void t1_ctc(uint16_t top , uint16_t comp_extra)
  * @see T1_CTC( TOP )
  * @see T1_CTC_INT_ON
  * @see t1_ctc_int_off(void)
+ *
+ * @author Hannes
  */
 #define T1_CTC_INT_OFF ( TIMSK &= ~_BV( OCIE1A ) )
 
@@ -445,6 +499,8 @@ void t1_ctc(uint16_t top , uint16_t comp_extra)
  * @see T1_CTC_INT_OFF
  * @see t1_ctc(uint16_t top , uint16_t comp_extra)
  * @see t1_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 void t1_ctc_int_off(void)
 {
@@ -461,6 +517,8 @@ void t1_ctc_int_off(void)
  * @see T1_CTC( TOP )
  * @see T1_CTC_INT_OFF
  * @see t1_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 #define T1_CTC_INT_ON ( TIMSK |= _BV( OCIE1A ) ) 
 
@@ -476,6 +534,8 @@ void t1_ctc_int_off(void)
  * @see T1_CTC_INT_ON
  * @see T1_CTC_INT_OFF
  * @see t1_ctc_int_on(void)
+ *
+ * @author Hannes
  */
 void t1_ctc_int_on(void)
 {
@@ -488,6 +548,10 @@ void t1_ctc_int_on(void)
  *
  * The timer will be started with the given division factor. See parameter 
  * \b CLOCKDIVISION.
+ * 
+ * @pre You probably want to set up the timer somehow first. If you would like
+ *      to clear the timer on a compare match, you can use ::T1_CTC( TOP ) to
+ *      do so.
  *
  * @param CLOCKDIVISION Dividing factor for the main clock.
  *                      Values are: \b 1 (no division), \b 8, \b 64, \b 256 and
@@ -496,6 +560,8 @@ void t1_ctc_int_on(void)
  *                      will be applied.
  * @see T1_STOP
  * @see t1_start(uint16_t clockdivision)
+ *
+ * @author Hannes
  */
 #define T1_START( CLOCKDIVISION ) do{ \
 	/* Converting CLOCKDIVISION to a binary represation. */\
@@ -539,6 +605,7 @@ void t1_ctc_int_on(void)
  *                      will be applied.
  * @see T1_START( CLOCKDIVISION )
  *
+ * @author Hannes
  */
 void t1_start(uint16_t clockdivision)
 {
@@ -551,6 +618,8 @@ void t1_start(uint16_t clockdivision)
  * The timer will be stopped.
  *
  * @see T1_START( CLOCKDIVISION )
+ *
+ * @author Hannes
  */
 #define T1_STOP (TCCR1B &= ~(_BV( CS12 )|_BV( CS11 )|_BV( CS10 )) )
 
@@ -561,6 +630,8 @@ void t1_start(uint16_t clockdivision)
  * behaviour is exacly the same.
  *
  * @see T1_STOP
+ *
+ * @author Hannes
  */
 void t1_stop()
 {
@@ -578,6 +649,8 @@ void t1_stop()
  *
  * @see T1_START( CLOCKDIVISION )
  * @see T1_STOP
+ *
+ * @author Hannes
  */
 #define T1_RESET ( TCNT1 = 0x0000 )
 
