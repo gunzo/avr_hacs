@@ -2,6 +2,356 @@
 @page hardware_soft AVR development board code overview
 
  This part of the documentation gives a structural overview over the code
- writen for the AVR development board.
+ written for the AVR development board. For a complete description of all
+ files, macros and function, please refer to the file documentation later in 
+ this document.
 
-*/
+@section hardware_soft_timer Timer overview
+
+ The macros and functions to handle some aspects of timer 0 and timer 1 in 
+ timers.h are well documented. Usage of the macros should be easy by reading
+ the file documentation. There might though be two aspects which might need
+ some clarification:
+
+	@subsection timers_top_extra TOP and COMP_EXTRA designation
+
+	 Like in the Atmega32 datasheet, the label TOP refers to the maximal value the
+	 timer is actually counting to. This can be a different value from a timers
+	 maximal value (MAX). In the Clear Timer on Compare mode (CTC mode), a timer
+	 counts to the value in the primary timers compare register and will then be
+	 cleared. This means the timer counted to a certain value in this compare
+	 register. This value is not necessarily the maximum value the timer could 
+	 count to. This value is called TOP. 
+
+	 For the timer 1 an additional compare register exists. To keep it simple, I
+	 did not use the term used in the data sheet (Output Compare Register 1 B, 
+	 OCR1B) but called it COMP_EXTRA. COMP_EXTRA seemed to be suitable because it 
+	 is an additional possibility to compare the timer count with a number. This
+	 register does not have influence on the count value in any mode.
+
+	@subsection timers_extra_reachable COMP_EXTRA reachability
+
+	 Since the CTC mode is the only mode which is supported by timers.h , one very
+	 important consequence arises: If the COMP_EXTRA value is bigger than the TOP 
+	 value, the flag corresponding to COMP_EXTRA will never be set. This should
+	 not be a problem because the order in which the comparisons appears is not
+	 relevant for a program flow, since the order of checking for the flags can be
+	 changed.
+
+@section hardware_soft_disp Display overview (display.h and display_snippets.h)
+
+ For a description of all macros and functions, please go to the display.h and 
+ display_snippets.h file documentation. 
+
+ 	@subsection disp_relevant_info External sources
+
+	 There are two external documents which are useful when trying to follow this
+	 description:
+
+	 <ul>
+	 	<li>
+			Display controller data sheet st7066.pdf: 
+			http://www.lcd-module.de/fileadmin/eng/pdf/zubehoer/st7066.pdf
+	 	</li>
+		<li>
+			Display data sheet: http://www.display-elektronik.de/DEM20485SYH-LY.PDF
+		</li>
+	 </ul>
+
+	@subsection disp_design Design
+
+	 The macros and functions used to handle the display in a convenient way are
+	 split up into two files: display.h and display_snippets.h . 
+	 display_snippets.h contains very basic macros which perform simple action
+	 like setting up the needed ports, starting and stopping the wait timer,
+	 reacting on timer events and so on. This basic components allow to compose
+	 macros or functions that can solve certain tasks related to the display.
+	 Such macros and functions can be found in the display.h header file.
+
+	 This design allows to reimplementation of similar functionality in different
+	 macros or function, but in an adjusted and optimized way for the function.
+	 Moreover, it significantly increased the readability and maintainability of
+	 the code.
+
+	 The user might never have to take a look into the display_snippets.h header
+	 file. Some user adjustable variables can be overridden in the user C file,
+	 others must be changed in the header file.
+
+	 Definitions that can be overwritten in the user C file are:
+	 <ul>
+	 	<li>LCD_CLOCKDIVISION</li>
+	 	<li>LCD_EXTRA_DIV</li>
+	 	<li>LCD_TOP_DIV</li>
+	 </ul>
+	 Those allow to somewhat tune the speed, at which data is send to the display.
+	 The default settings should work safely for all displays. It is noteworthy
+	 that LCD_EXTRA_DIV and LCD_TOP_DIV influence also the duty cyle of the
+	 generated clock.
+
+	 Definitions that have to be changed in the display.h header file.
+	 <ul>
+	 	<li>LCD_RS</li>
+	 	<li>LCD_EN</li>
+	 	<li>LCD_D4</li>
+	 	<li>LCD_D5</li>
+	 	<li>LCD_D6</li>
+	 	<li>LCD_D7</li>
+	 	<li>LCD_PORT</li>
+	 	<li>LCD_DDR</li>
+		<li>LCD_MAX_CHARS</li>
+		<li>LCD_MAX_CHARS_LINE</li>
+	 </ul>
+
+	 In this project there is naturally no need to change any of those values,
+	 but giving the possibility to do so will improve portability and re usability
+	 of the code. 
+
+	@subsection disp_clocking Clocking
+
+	 To produce the clock signal on the E pin on the display, macros that start 
+	 with "LCD_WAIT" in display_snippets.h are used. Those commands "front end"
+	 corresponding timer 1 macros and add functionality. The names for the macros
+	 are not very friendly to new user and where chosen out of lack of creativity
+	 and time pressure. The names are friendly for users which have knowledge 
+	 about timer 1 in timers.h . The file documentation should make a correct use
+	 of those statements apparent, but here is the reference order for the commands
+	 excluding data setup statements. Data set up statements should be used 
+	 according to timing considerations. For more information, please consult the
+	 display data sheet mentioned at \ref disp_relevant_info.
+
+	 <table border="1">
+	 	<tr>
+			<th><b>Macro</b></th>
+			<th><b>Description</b></th>
+	 	</tr>
+	 	<tr>
+			<td>LCD_WAIT_SETUP</td>
+			<td>
+			    Sets the timer used for timing the wait cycles up. This happens according
+			    to the LCD_CLOCKDIVISION, LCD_EXTRA_DIV and LCD_TOP_DIV macros.
+			</td>
+	 	</tr>
+	 	<tr>
+			<td>LCD_WAIT_TIMER_START</td>
+			<td>Starts the timer used for timing the wait cycles.</td>
+	 	</tr>
+	 	<tr>
+			<td>LCD_WAIT_CLK_HIGH</td>
+			<td>
+			    Sets LCD_EN high and waits for the EXTRA flag. The EXTRA flag is the 
+			    first flag which goes high after the timer starts. Its value is
+			    defined in LCD_EXTRA_DIV.
+			</td>
+	 	</tr>
+	 	<tr>
+			<td>LCD_WAIT_CLK_LOW</td>
+			<td>
+			    Sets LCD_EN low and waits for the TOP flag. The TOP flag is the second
+			    flag that goes high after the timer starts. Its value is defined in 
+			    LCD_TOP_DIV. At this value, the timer will also be cleared.
+			</td>
+	 	</tr>
+	 	<tr>
+			<td>LCD_WAIT_TIMER_STOP</td>
+			<td>Stops the timer used for timing the wait cycles.</td>
+	 	</tr>
+	 </table>
+
+	 To see practical examples, please refer to the source code for display.h,
+	 which is found after the file documentation.
+
+	@subsection disp_osci_pics Oscilloscope screen shots  
+	 
+	 Here are some oscilloscope screen shots from the communication with the LCD 
+	 to allow the reader to gain a somewhat more physical grasp of the theory 
+	 above. Only a selection of the pins needed to communicate with the display is
+	 shown. This is due to the limited channels the used oscilloscope has.
+
+	 This list relates the channel number of the oscilloscope to the measured 
+	 signal.
+
+	 <ol>
+	 	<li>E (Enable)</li>
+	 	<li>RS (Register Select)</li>
+	 	<li>D4 (Data 4)</li>
+	 	<li>D5 (Data 5)</li>
+	 </ol>
+
+	 The following screen shot shows a writing operation for three characters and 
+	 one command. The character writing operation is distinguishable from the
+	 command operation by taking a look at the second, green, signal. The high part
+	 indicates the character writing operation, the low part the command operation.
+
+	 @image html disp_three_char_two_cmd.png "Character write and command operation"
+	 @image latex disp_three_char_two_cmd.eps "Character write and command operation" width=\textwidth
+
+	 Here we can see a longer write action. The measurements are taken for the 
+	 first, the clock or E signal.
+
+	 @image html lcd_write_excerpt.png "Excerpt from the lcd_write funkiton"
+	 @image latex lcd_write_excerpt.eps "Excerpt from the lcd_write funkiton" width=\textwidth
+
+	 The following screen shot shows a more close view on a data operation. Signals
+	 two and four are not shown  to be able to concentrate on the data operation.
+	 The display will read the data at a falling edge of the clock (E) signal. We
+	 can also see, that new data is set up shortly before the rising edge of the
+	 clock.
+
+	 @image html disp_data_exchange_excerpt.png "Closeup data writing operation"
+	 @image latex disp_data_exchange_excerpt.png "Closeup data writing operation" width=\textwidth
+
+	@subsection lcd_init_desc LCD initialisation: LCD_INIT
+
+	 This macro initialises the display in 4 pin mode and switches it on. To do 
+	 so, it must follow a sequence during which the display can be brought into a
+	 certain state. The following table will show the steps:
+
+	 <table border="1">
+	 	<tr>
+			<th><b>Action</b></th>
+			<th><b>Description</b></th>
+			<th><b>Command</b></th>
+		</tr>
+	 	<tr>
+			<td>Wait for 15ms</td>
+			<td>Power on delay.</td>
+			<td>_delay_ms(15);</td>
+		</tr>
+	 	<tr>
+			<td>Send 0011 as command</td>
+			<td>Initialisation command. The display controller expects this.</td>
+			<td>LCD_CMD_NIBBLE( 0b0011 );</td>
+		</tr>
+	 	<tr>
+			<td>Wait for 5 ms</td>
+			<td>
+			    The display controller demands a delay of more than 4.1 ms. 5 ms is 
+			    used.
+			</td>
+			<td>_delay_ms(5);</td>
+		</tr>
+	 	<tr>
+			<td>Send 0011 as command</td>
+			<td>Initialisation command. The display expects this.</td>
+			<td>LCD_CMD_NIBBLE( 0b0011 );</td>
+		</tr>
+	 	<tr>
+			<td>Wait for 1 ms</td>
+			<td>
+			    The display controller demands a delay of more than 100 us. 1 ms is 
+			    used.
+			</td>
+			<td>_delay_ms(1);</td>
+		</tr>
+	 	<tr>
+			<td>Send 0011 as command</td>
+			<td>Initialisation command. The display expects this.</td>
+			<td>LCD_CMD_NIBBLE( 0b0011 );</td>
+		</tr>
+	 	<tr>
+			<td>Wait for 1 ms</td>
+			<td>
+			    The data sheet for the display controller does not request a delay here.
+			    There is one anyway, because the supervisors reference function uses 
+			    one here.  After the initialisation worked, removing the delay was not 
+			    tested.
+			</td>
+			<td>_delay_ms(1);</td>
+		</tr>
+	 	<tr>
+			<td>Send 0011 as command</td>
+			<td>Initialisation command. The display expects this.</td>
+			<td>LCD_CMD_NIBBLE( 0b0011 );</td>
+		</tr>
+	 	<tr>
+			<td>Wait for 1 ms</td>
+			<td>
+			    The data sheet for the display controller does not request a delay here.
+			    There is one anyway, because the supervisors reference function uses 
+			    one here.  After the initialisation worked, removing the delay was not 
+			    tested.
+			</td>
+			<td>_delay_ms(1);</td>
+		</tr>
+	</table>
+	<table border="1">
+	 	<tr>
+			<td>Funktion Set: Byte 00101000 is written as command</td>
+			<td>
+			    With the function set command, the display allows to set (next to 
+			    others) the mode for the interface. We use choose the 4 bit interface.
+			    The data sheet is inconsistent here. In the instruction table, other
+			    pins claim this functionality than in the initialisation description.
+			    We used the instruction table as reference, since this was also what
+			    the initialisation reference function from our supervisor did.
+			</td>
+			<td>LCD_CMD_BYTE( 0b00101000 );</td>
+		</tr>
+		<tr>
+			<td>Wait for 1 ms</td>
+			<td>
+			    The data sheet for the display controller does not request a delay here.
+			    There is one anyway, because the supervisors reference function uses 
+			    one here.  After the initialisation worked, removing the delay was not 
+			    tested. Also, this delay respects execution time the LCD might need.
+			</td>
+			<td>_delay_ms(1);</td>
+		</tr>
+		<tr>
+			<td>Display off: Byte 00001000 is written as command</td>
+			<td>Turns the display off. Expected command by the display controller.</td>
+			<td>LCD_CMD_BYTE( 0b00001000 );</td>
+		</tr>
+		<tr>
+			<td>Wait for 1 ms</td>
+			<td>
+			    The data sheet for the display controller does not request a delay here.
+			    There is one anyway, because the supervisors reference function uses 
+			    one here.  After the initialisation worked, removing the delay was not 
+			    tested. Also, this delay respects execution time the LCD might need.
+			</td>
+			<td>_delay_ms(1);</td>
+		</tr>
+		<tr>
+			<td>Display clear: Byte 00000001 is written as command.</td>
+			<td>Clears the display. Expected command by the display controller.</td>
+			<td>LCD_CMD_BYTE( 0b00000001 );</td>
+		</tr>
+	</table>
+	<table border="1">
+		<tr>
+			<td>Wait for 2 ms</td>
+			<td>
+			    The instruction table in the display controller data sheet specifies a
+			    minimum execution time of 1.54 ms to clear the display. 2 ms is used 
+			    instead.
+			</td>
+			<td>_delay_ms(2);</td>
+		</tr>
+		<tr>
+			<td>Entry mode set: Byte 00000110 is written as command.</td>
+			<td>
+			    The cursor movement is set set to increment, the shift property is 
+			    disabled.
+			</td>
+			<td>LCD_CMD_BYTE( 0b00000110 );</td>
+		</tr>
+		<tr>
+			<td>Display on: Byte 00001100 is written as a command.</td>
+			<td>
+			    Switches the display on, so there is no need to do so on the user side.
+			    This is no more part of the required initialisation for the display
+			    controller. 
+			</td>
+			<td>LCD_CMD_BYTE( 0b00001100 );</td>
+		</tr>
+	 </table>
+
+	 The following oscilloscope picture shows the signals (in this order) E, RS, 
+	 D4, D5 for the entire display initialisation described above. The data lines
+	 D6 and D7 are not on the picture because the oscilloscope only has 4 inputs.
+
+	 @image html lcd_init_complete.png "Oscilloscope screen shot for the LCD_INIT macro."
+	 @image latex lcd_init_complete.eps "Oscilloscope screen shot for the LCD_INIT macro." width=\textwidth
+
+*/ 

@@ -110,7 +110,7 @@
 			 The schematic does not show the 26 pin connector for peripherals. 
 			 See @ref avr_conn
 
-			@subsucsection avr_pic
+			@subsubsection avr_pic
 
 		 	 @image html avr_developement_board_pic.png "Picture of the AVR decelopment board"
 		 	 @image latex avr_developement_board_pic.eps "Picture of the AVR decelopment board" width=\textwidth
@@ -904,7 +904,7 @@
 			 The data sheet for the RFID reader contains information about protocols and
 			 setup. It can be found on campus net and is named: 
 			 "RFID-Reader_Datasheet_slave.pdf". In the data sheet, the chapter which 
-			 probably is of most interest is: </b> 6. Documentation for the interface to
+			 probably is of most interest is: <b> 6. Documentation for the interface to
 			 the ATmega8 </b>.
 
 			

@@ -1,18 +1,31 @@
 /*!
 @page testing_c C tests
 
-@section display_test Display test
- 
- The file ::display_test.c tests all macros and funktions in ::display.h . To
- understand the tests, please read the comments in ::display_test.c. The
- comments guide through the test. They have the following structure:
+@section about_test About testing the C code
 
+ Although there would be the possibility of using a unit test like system for
+ testing C code (http://throwtheswitch.org/white-papers/unity-intro.html), using
+ it was not scope of the course. Also, the requested type of test (namely: 
+ Screen shots from debuggers) has more the characteristic of a one time proof 
+ that a macro or function works. Therefore, the test found in this sections are 
+ rarely capable to detect regressions in an easy way or add more test for new
+ features to a set of existing tests.
+
+@section display_test Display header files 
+ 
+ The file display_test.c tests all macros and funktions in display.h . To
+ understand the tests, please read the comments in display_test.c. The
+ comments guide through the test and have the following structure.
 
  # TEST {number}
  #
- # Wath is tested: {description}
+ # What is tested: {description}
  #
  # {Description on how it works and what might be seen in some cases.}
+
+ By testing display.h, also display_snippets.h is tested since most macros
+ and functions in display.h  use almost every macro/funktions in 
+ display_snippets.h .
 
  Here are pictures form a successfull test run. The pictures are in order.
 
@@ -36,5 +49,63 @@
 
  @image html disp_test_7.png "Picture of successful TEST 7"
  @image latex disp_test_7.eps "Picture of successful TEST 7" width=\textwidth
+
+
+@section timer_test Timer header file
+ 
+ The timer methods in the file timers.h are tested by two different C files.
+ The first one timer_0_test.c was created to test all methods written for 
+ timer 0. The file timer_1_test.c tests methods written for timer 1. Both C 
+ files have the same basic structure with one exceptions: the file to test
+ timer 1 also checks if the handling of the extra compare register and flag is
+ working.
+
+ It must be stressed, that close study of the well commented test files is the
+ only way to throughly understand what will be described here and to adapt the
+ test to new features.
+
+ 	@supsection timer_test_desc Test description
+
+	 The test for timer 0 and timer 1 related macros and functions work in a very
+	 similar way. The only major difference shows itself in the very beginning of
+	 the tests and will me mentioned.
+
+	 The AVR development board LED is used to make the tests visible. The correct
+	 kind and order of the LED being lid, represents a successful test.
+
+	 Here is a small guide with some notes through the test:
+
+	 The test starts with one very short short flash for the timer 0 test and two
+	 short flashes for the timer 1 test. To allow the eye to prepare itself, one 
+	 second delays are placed after, before and in between the flashes. 
+	 After the flashes, the timer interrupt is activated. In the interrupt routine,
+	 the LED is toggled after a certain amount of interrupt calls. This causes the
+	 LED to blink. During this prozess, the timer speed will be changed. The LED 
+	 blinks slower. Another speed change for the timer happens, the LED will blink
+	 fast again.
+	 Finally, the timer might be stopped or the interrupt deactivated. This depends
+	 on what the tester would like to test. From stopping the timer, no recovery is
+	 designated. The LED will not light up any more. If the interrupt is
+	 deactivated, it can be reactivated after a 5 seconds delay, depending on the
+	 preference of the tester.
+
+	 To test the reset functionality, a special test was used, using the button of
+	 the AVR development board. If the button is pushed, the timer will be reset 
+	 as long it is pushed. The LED will keep its state as long the button is 
+	 pushed. This test is especially verbose during the blinking phases of the 
+	 LED.
+
+	 It must again be stressed, to fully understand the testing, the source for
+	 timer_0_test.c or timer_1_test.c must be studied.
+
+
+	@subsection timer_test_oddity Unexplainable behaviour
+
+	 After the short flashes at the beginning of the timer 1 test, the LED stays 
+	 lid for an oddly long time. A lower TOP value for the timer seemed to resolve
+	 the problem, but this did not explain the unexpected behaviour when using a 
+	 higher value. The test is considered to be passed anyway, because the rest of
+	 the test is unambiguous enough to verify the functionality of all tested
+	 macros and functions.
 
 */
