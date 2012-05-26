@@ -3,19 +3,24 @@
 #include </home/fragraider/ingenioerhoejskolen_i_koebenhavn_IHK/digital_electronics_2/avr_hacs/include/timers.h>
 #include </home/fragraider/ingenioerhoejskolen_i_koebenhavn_IHK/digital_electronics_2/avr_hacs/include/avrboard.h>
 
-#define F_CPU 1000000UL // 1 MHz
+#define F_CPU 10000000UL // 10 MHz
 #include <util/delay.h>
 
 /** @file
  *
- * @brief Tests timer 1 macros and funktions in timer.h
+ * @brief Tests timer 1 macros and functions in timer.h
  *
- * This file can be used to test funktions and macros for timer 1 in 
- * ::timers.h . Some of the macros and funktions have to be exclusively
- * uncommented to test them. The commends in the source code will help with
- * this. Since timers.h provides access to some more features special to
- * timer 1, this testfile is somewhat more complex than the timer 0 
- * testfile ( ::timer_0_test.c ).
+ * This file can be used to test functions and macros for timer 1 in 
+ * ::timers.h . Some of the macros and functions have to be exclusively
+ * uncommented to test them. The comments in the source code will help with
+ * this.
+ *
+ * ::timers.h allows access to the second compare register timer 1 has, this
+ * will be tested here too.
+ *
+ * Note: In the comments for the source code, doomsday means, the LED will
+ * stay off due to a disabled interrupt. Daysaver refers to the reactivation
+ * of the interrupt some time after it was disabled.
  *
  * @author Hannes
  */
@@ -27,18 +32,24 @@
  */
 static uint8_t count=0;
 
-#define TOP_val 60
+#define TOP_val 150
 
-/** 
- * @brief Interrupt for Clear Timer on Compare interrupt.
+/** Interrupt for Clear Timer on Compare.
  *
- * When the Interrupt happend 10 times, the LED is
- * toggled.
- * The LED will blink 3 times long, 3 times short. What happens then can be
- * choosen in this interupt. See 
- * \code
- * if (count == 200)
- * \endcode
+ * Every 10th interrupt, the LED is toggled.
+ *
+ * When the interrupt happened 50 times, the parameters for the clock are 
+ * changed.
+ *
+ * When the interrupt happened 100 times, the parameters for the clock are
+ * changed again.
+ *
+ * After 200 interrupt calls, the tester can test macros or function that stop
+ * the timer or disable the interrupt for the timer.
+ *
+ * This will stop the blinking of the led entirely... The interrupt is not
+ * reachable anymore. Why this is not final and allows testing of other timer 
+ * timer related functions, see the main function.
  *
  * @see count
  */
@@ -51,9 +62,8 @@ ISR(TIMER1_COMPA_vect)
 	if ( count%10 == 1 ) 
 	{
 		// ...toggle the LED
-		PORTB ^= _BV( 0 );
+		LED_TOGGLE;
 	}
-
 
 	if (count == 50)
 	{
@@ -75,9 +85,12 @@ ISR(TIMER1_COMPA_vect)
 	{
 		// end it all...
 		/* Uncomment the doomsday funktion of your choise, comment the others: */
+
 		//t1_stop();
 		//T1_STOP;
+
 		/* Doomsday, but not realy... see "Daysaver if" in while loop in main */
+
 		//T1_CTC_INT_OFF;
 		t1_ctc_int_off();
 
@@ -98,17 +111,20 @@ int main(void)
 SREG |= _BV( 7 );
 
 // Port B, pin 0 as output.
-DDRB |= _BV( 0 );
+LED_ACTIVATE;
 // Switch the LED off.
-PORTB |= _BV( 0 );
+LED_OFF;
 
 // Setup a clear on match timer interupt.
-t1_ctc( TOP_val , TOP_val/2 );
+t1_ctc( 2*TOP_val , TOP_val );
+
+// Delay, so that the tester can prepare his eys
+_delay_ms(1000);
 
 // Invalid value, the counter should run fast, the LED imideatly ON.
 T1_START(4);
 
-/* This next part causes a _VERY_ short flashing of the LED at the very 
+/* This next part causes a _VERY_ short flash of the LED at the very 
  * beginning if T0_COMP_MATCH_EXTRA and T0_COMP_MATCH_EXTRA_CLEAR are working
  * :). If one of them is not working, nothing more will happen, the LED will 
  * never change.*/
@@ -121,7 +137,8 @@ LED_OFF;
 
 /* To see some effect, we stop the timer and start it again afer a delay. */
 T1_STOP;
-_delay_ms(500);
+// Delay, so that the tester can prepare his eys
+_delay_ms(1000);
 T1_START(4);
 
 /* This next part causes a very short flashing of the LED at the very beginning
@@ -134,11 +151,11 @@ T1_COMP_MATCH_TOP_CLEAR;
 while( T1_COMP_MATCH_TOP ) {}
 LED_OFF;
 
-
+// Delay before the rest of the test starts.
+_delay_ms(1000);
 
 // Activating the ctc interrupt
 t1_ctc_int_on();
-
 
 	// Loop forever
 	while(1)
@@ -149,7 +166,7 @@ t1_ctc_int_on();
 			_delay_ms(5000); 
 			/* Uncoment a Daysaver (or not) */
 			//T1_CTC_INT_ON;
-		t1_ctc_int_on(); 
+			t1_ctc_int_on(); 
 		}
 
 
@@ -161,6 +178,5 @@ t1_ctc_int_on();
 		{
 			T1_RESET;
 		}
-
 	}
 }

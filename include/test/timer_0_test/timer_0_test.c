@@ -3,7 +3,7 @@
 #include </home/fragraider/ingenioerhoejskolen_i_koebenhavn_IHK/digital_electronics_2/avr_hacs/include/timers.h>
 #include </home/fragraider/ingenioerhoejskolen_i_koebenhavn_IHK/digital_electronics_2/avr_hacs/include/avrboard.h>
 
-#define F_CPU 1000000UL // 1 MHz
+#define F_CPU 10000000UL // 10 MHz
 #include <util/delay.h>
 
 /** @file
@@ -59,7 +59,7 @@ ISR(TIMER0_COMP_vect)
 	if ( count%10 == 1 ) 
 	{
 		// ...toggle the LED
-		PORTB ^= _BV( 0 );
+		LED_TOGGLE;
 	}
 
 
@@ -86,10 +86,9 @@ ISR(TIMER0_COMP_vect)
 
 		//t0_stop();
 		//T0_STOP;
-		//T0_CTC_INT_OFF;
-		//t0_ctc_int_off();
 
 		/* Doomsday, but not realy... see Daysaver if in while loop in main */
+
 		//T0_CTC_INT_OFF;
 		t0_ctc_int_off();
 
@@ -104,12 +103,15 @@ int main(void)
 SREG |= _BV( 7 );
 
 // Port B, pin 0 as output.
-DDRB |= _BV( 0 );
+LED_ACTIVATE;
 // Switch the LED off.
-PORTB |= _BV( 0 );
+LED_OFF;
 
 // Setup a clear on match timer interupt.
-t0_ctc( TOP_val );
+t0_ctc( 2*TOP_val );
+
+// Delay, so the tester can prepare his eys.
+_delay_ms(1000);
 
 // Invalid value, the counter should run fast.
 T0_START(4);
@@ -123,6 +125,8 @@ T0_COMP_MATCH_CLEAR;
 while( T0_COMP_MATCH ) {}
 LED_OFF;
 
+// Delay before the rest of the test starts.
+_delay_ms(1000);
 
 // Activating the ctc interrupt
 t0_ctc_int_on(); 
