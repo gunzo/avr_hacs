@@ -395,7 +395,7 @@
 			 </table>
 
 			 Other components found in the schematic are connected in a simple way. They
-			 don't realy have an unexpected behaviour.
+			 don't really have an unexpected behaviour.
 			 This is also true for the hex keypad (B4 : P4 : Keypad_8pin).
 
 			@subsubsection cpld_layout Layout

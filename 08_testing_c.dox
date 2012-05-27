@@ -64,7 +64,7 @@
  only way to throughly understand what will be described here and to adapt the
  test to new features.
 
- 	@supsection timer_test_desc Test description
+ 	@subsection timer_test_desc Test description
 
 	 The test for timer 0 and timer 1 related macros and functions work in a very
 	 similar way. The only major difference shows itself in the very beginning of

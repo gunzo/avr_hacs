@@ -1,0 +1,226 @@
+/*!
+@page java Java
+
+@section java_linux Running java projects in linux with no IDE
+
+	@subsection java_linux_intro
+
+	 IDEs can be very convenient for software development in general. I feel 
+	 though, that they are not always very adaptive to the users preferences. 
+	 Options or action that seem natural on the command line are often hidden in
+	 menus and sub menus. I often found my self in the situation of being unhappy
+	 with the layout of my project. After searching for ways to change the file
+	 structure with IDE native tools, I ended up doing it manually directly in the
+	 file system. I found myself then in the unpleasant situation of figuring out
+	 how to make the IDE use the new layout. It then happened quite often, that I
+	 tried to get it working as it was before and ended up creating a new project.
+
+	 This time I not only wanted to not deal with IDEs, I was also curios about 
+	 how difficult and efficient the manual approach is.
+
+	 In our case, the proposed software NetBeans IDE  is a rather heavy peace of
+	 software that did not run very well on all machines. The time some of my
+	 classmates needed to get NetBeans fully running, was enough time for me to
+	 more or less figure out how to run and compile programs in the command line.
+	 Testing took some more time, but I am aware of some classmates to which testing
+	 in NetBeans is not yet completely clear.
+
+	 As an alternative for the NetBeans build in UML program, I used ArgoUML
+	 ( http://argouml.tigris.org/ ) which did its job so far fine enough.
+
+	 This little guide might help others, who want to go the command line way, get
+	 started faster.
+
+	@subsection java_linux_edit Editing
+
+	 Like in an IDE, the editor is in my opinion the core tool of ones 
+	 development environment. Searching the internet for good editors in Linux, one
+	 might realize this is a question of believe. In the open source world some 
+	 concepts have developed and they are implemented by some editors. Which one is
+	 the right one, indeed is a matter of believe and personal preference. This 
+	 short comic strip expresses this:
+
+	 @image html xkcd_real_programmers.png "Real Programmers (http://xkcd.com/378/)"
+	 @image latex xkcd_real_programmers.eps "Real Programmers (http://xkcd.com/378/)" width=\textwidth
+
+	 My editor of choice is Vim. Both, the command line program and the GUI version
+	 support every imaginable syntax. It is a mode based editor, so the user can
+	 switch between modes, making the use of the keyboard more efficient and a 
+	 mouse almost obsolete. Vim allows very fast editing. A downside of Vim is the 
+	 amount of time needed to learn Vim. Basic commands and movement keys are
+	 learned within a week. More complex operations need some more time, also 
+	 because new commands need to be used to be learned. It is otherwise easy to
+	 forget about some useful possibilities Vim provides for editing.
+
+	@subsection java_linux_jar Jar packages
+
+	 I quickly discovered, that .jar packages are basically zip archives 
+	 containing pre compiled Java classes. There are no source files in those 
+	 packages. If classes from those .jar packages are included, the include
+	 statement needs to point to the class path, relative to the .jar package's
+	 root.
+
+	@subsection java_linux_compile Compiling
+
+	 Compiling is rather simple if all classes are in one folder. Something like 
+	 this can be run in that case:
+
+	 @code
+javac *.java
+	 @endcode
+
+	 All java files in the current folder will be compiled. If the classes are
+	 distributed over several folders, like it is done by NetBeans, then every 
+	 folder, sub folder and so on must be mentioned:
+
+	 @code
+javac folder1/*.java folder2/*.java folder2/subfolder1/*.java
+	 @endcode
+
+	 It is also possible to name every single class explicitly.
+
+	 There is one thing that needs to be mentioned. If the classes belong to a 
+	 package, then a directory where to put the classes into must be given.
+	 Otherwise the Java virtual machine will not be able to run the classes.
+	 This can be done with the -d (Directory) flag:
+
+	 @code
+javac -d classes folder1/*.java folder2/*.java folder2/subfolder1/*.java
+	 @endcode
+
+	 All the classes will be put into their respective package folder in the 
+	 classes folder.
+
+	 If additional libraries from .jar packages are used, they need to be pointed
+	 at with the -cp (ClassPath) flag.
+	 
+	 @code
+javac -cp .:</Path/to/>derbyclient.jar:</Path/to/>rxtx.jar:<Path/to/>jUnit.jar -d classes folder1/*.java folder2/*.java folder2/subfolder1/*.java
+	 @endcode
+
+	 To automate this a little, here is a complete script for doing this. The user
+	 should adjust the folder names, where the .java files are in.
+	 The script will create the classes folder if it does not exist yet.
+
+	 @code
+#!/bin/bash
+
+if [[ ! -d ./classes ]]
+then
+        mkdir ./classes
+fi
+
+javac -cp .:</Path/to/>derbyclient.jar:</Path/to/>rxtx.jar:<Path/to/>jUnit.jar -d classes folder1/*.java folder2/*.java folder2/subfolder1/*.java
+	 @endcode
+
+
+	@subsection java_linux_run Running
+
+	 Running Java classes with the Java virtual machine is easy if no packages
+	 are used and all classes are in the same folder. In that case, the class
+	 containing the main method can be run like this:
+
+	 @code
+java -cp . MainClass
+	 @endcode
+
+	 Note, that the .class ending must be omitted. Also, this must be run where 
+	 the classes are actually located. The -cp (ClassPath) flag, tells the Java
+	 in which folder to look for the classes. The dot '.' represent the actual
+	 folder.
+
+	 If packages are used, the package name must be prefix to the main class. If
+	 the main class is for example in the package database, this must be run:
+
+	 @code
+java -cp . database.MainClass
+	 @endcode
+
+	 This assumes that the class directrory for the compiling step was the current
+	 directory. If we use the example from @ref java_linux_compile , than we
+	 need to change to the class directory:
+
+	 @code
+cd classes
+java -cp . database.MainClass
+	 @endcode
+	 
+	 Finally, if additional libraries from jar files are used, we need to tell Java
+	 where to find them:
+
+	 @code
+java -cp .:</Path/to/>derbyclient.jar:</Path/to/>rxtx.jar:<Path/to/>jUnit.jar database.MainClass
+	 @endcode
+
+	 The colons ':' separate the paths from each other.
+
+	 We can sum our learnings up in a script again. In the same folder where the
+	 compile script is run, we can afterwards run this:
+
+	 @code
+#!/bin/bash
+
+cd classes
+java -cp .:</Path/to/>derbyclient.jar:</Path/to/>rxtx.jar:<Path/to/>jUnit.jar database.MainClass
+	 @endcode
+
+	@subsection java_linux_testing Testing
+
+	 For testing, simply add a corresponding main method to your test class. Here
+	 is the complete test class for the date exercise. It only contains one test,
+	 but it can be extended by an arbitrary amount of more tests.
+
+	 @code{.java}
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.util.*;
+
+public class DateTest extends junit.framework.TestCase
+{
+        /* Constructor (does nothting) */
+	public DateTest(){ }
+
+	/* Main Method, runs the tests in the specified class. */
+        public static void main(String args[]) {
+                  org.junit.runner.JUnitCore.main("DateTest");
+	}
+
+	@Test
+	public void testDefaultConstructorDate(){
+		Date defaultDate = new Date();
+		Date defaultDate1 = new Date();
+
+		assertTrue( defaultDate.equals(defaultDate1) );
+	}
+}
+	 @endcode
+
+	 Since this class has a main method, it can be compiled and run like described
+	 in @ref java_linux_compile  and @ref java_linux_run .
+
+	@subsection linux_java_trouble Trouble shooting
+
+	 <ul>
+	 	<li>
+		    Make sure all scripts are executable. You can make them executable 
+		    with
+		    @code
+chmod u+x run compile
+		    @endcode
+		    if run and compile are the names of your scripts. To run them type
+		    @code
+./compile
+		    @endcode
+		    and
+		    @code
+./run
+		    @endcode
+	 	</li>
+	 	<li>
+		    If error messages appear about packages not being found, then the class
+		    paths given with the -cp flag are wrong. Mind, relative paths can cause
+		    a lot of trouble: the script given in @ref java_linux_run changes to the
+		    directory classes. Paths must be relative from there.
+	 	</li>
+	 </ul>
+*/

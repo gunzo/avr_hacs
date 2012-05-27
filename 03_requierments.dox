@@ -138,9 +138,10 @@
 	<li>The 16 (hex) button Keypad</li>
  </ul>
 
- Additionally need to provide our selfs with a computer, capable of running the java
- virtual machine. The computer also needs to have a USB port for communication
- with the rest of the hardware. We use our own computers to fulfil this requirement.
+ Additionally, we need to provide our selfs with a computer, capable of running 
+ the java virtual machine. The computer also needs to have a USB port for 
+ communication with the rest of the hardware. We use our own computers to fulfil
+ this requirement.
 
 @section req_not_given_hardware Not given hardware
  
@@ -152,9 +153,9 @@
 @section req_non_pc Software for the non computer hardware
 
  It is required to involve all the given hardware. The micro controller on the
- AVR development should be the main controller of the non PC part. Additionally,
- the non computer part must act according to the use case specifications
- (@ref use_case_spec).
+ AVR development board should be the main controller of the non PC part. 
+ Additionally, the non computer part must act according to the use case 
+ specifications (@ref use_case_spec).
 
 @section req_pc Software for the computer hardware
 
@@ -195,7 +196,7 @@
 
 	@subsection req_pc_non_pc_cable High level communication
 
-	 On top of the low level connection (USB, RS232), a packet based protocoll shall
+	 On top of the low level connection (USB, RS232), a packet based protocol shall
 	 be implemented. The frame for this protocol is defined here.
 
 	 <b>Frame</b>
