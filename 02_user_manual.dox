@@ -70,7 +70,7 @@
 	 The RFID that is written in the RFID Text Box is the one you are working with 
 	 at any time. 
 
-	 @waring The configuration below may not reflect the RFID in the RFID Text Box
+	 @warning The configuration below may not reflect the RFID in the RFID Text Box
 	 , until you select the Get Config button. You can very well overwrite or zero 
 	 out your configuration or another RFID’s configuration if you are not careful. 
 

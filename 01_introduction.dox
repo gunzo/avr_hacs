@@ -1,5 +1,157 @@
 /*! @mainpage Home Automation Control System
 
+@section personal_opinin_hwa My opinon (Hannes Wallnöfer, 111458)
+
+	@subsection prj_status_hwa Status
+
+	 The project is not finished. There is no real plan we could refer to as
+	 ours and there never was.
+
+	@subsection prj_history_hwa History
+
+	 At the very beginning of this semester, I felt that two ideas where conveyed:
+
+	 <ol>
+	 	<li>
+		    This semesters project is a big one, to allow us student to get better in
+		    contact with project management and group work.
+	 	</li>
+	 	<li>
+		    We will get the knowledge needed for the project, thought throughout the 
+		    semester.
+	 	</li>
+	 </ol>
+
+	 With both points in my mind, the semester started. Expecting that we will be
+	 introduced to some kind project management system I forced my group to wait a
+	 little bit with the planing. We where introduced to the Unified process. Then,
+	 an introduction to UML and the different standard UML diagrams was given. We
+	 then shortly returned to a somewhat abstract explanation of recursion in
+	 project management.
+
+	 At the same time, we learned about structuring C code with functions and 
+	 macros and using header files.
+
+	 I did not feel and still don't, that the information above was sufficient, to
+	 get engaged in some kind of professional project management.
+
+	 After those lessons in UML, structured C programming and some introduction
+	 in Unified Process, the semester went on with technical lessons. We learned
+	 about every peace of software and hardware we need to fulfill the project.
+
+	 But, what is the project? Still demanding some patience for the other group 
+	 members, I realized eventually that we will not learn more about project
+	 management than we did. Half of the semester was already over at that time.
+
+	 Now I can conclude, that point 1 in the list above, was not fulfilled to my
+	 expectations. More about point two later.
+
+	@subsection prj_srs_hwa The software requirements specification (SRS)
+
+	 Relatively early of the semester, we got a document in digital form on 
+	 campus net. This document was supposed to contain something called
+	 Software Requirements Specification. We where supposed to elaborate on it and
+	 present an iteration 1 in the class. At that time, it was my understating
+	 that iteration one is the elaboration of one party on requirements given
+	 by an other party. The result of this elaboration should be that the 
+	 elaborating team has understood the requirements and its consequences 
+	 before agreeing on implementing a system described by the requirements.
+	 Our group agreed on describing the requirements in a more elaborate way in
+	 our own words. During this process logical questions about how to interpret
+	 certain aspects of the specification came to my and another group members
+	 mind. This turned into a fiercely discussion which lasted for 3 hours.
+
+	 Our group had strong problems on agreeing on an interpretation of the SRS.
+	 We where in fact unable to meet the deadline for the hand in and asked our
+	 teacher for a delay. We had the chance to see the presentation of the
+	 other groups. The teacher seemed to be very happy with the groups 
+	 presentations. I felt, that the groups did not solve logical problems we
+	 encountered. At the end of the lessons, I asked the teacher if the 
+	 SRS should have been understood as a guideline to create our own requirements.
+	 The questions was answered with yes. It was already at that time apparent
+	 that this also is not true, since the requirements about the communication
+	 between the computer and  the rest of the hardware must be implemented
+	 with the given package format. 
+
+	 This means that our groups fierce discussion was based on something called a
+	 requirement, which turned out to be a guideline. I want to make clear that
+	 the mood in our group dropped significantly during this discussion.
+
+	 I also would like to make clear again what I wrote in a E-mail to one of the
+	 teachers and I would like to point to a trustworthy source:
+
+	 <b>requirement</b>
+	 noun
+	 Definition:
+	 something that you must do, or something you need
+
+	 Source: http://dictionary.cambridge.org/dictionary/british/requirement?q=requirement
+
+	@subsection prj_implement_hwa Implementation
+
+	 After realizing that we will not get education in project management in a
+	 for me understandable way, I decided to drop patience and started coding for
+	 the C part. Resulting from different kinds of frustrations that arose in 
+	 our group, we had a very hard time to plan at all. Several hours of talking
+	 to our teachers did not resolve the problem completely. Tasks with deadlines
+	 we did not understand added to the frustration.
+
+	 To do something that should definitely be useful, I started writing very 
+	 generic handlers for the timers. I realized that one group member was much
+	 faster in getting the spi and uart divers working than I could write some
+	 handlers for one timer. The same thing in Java, another group member had a gui
+	 with access to database working one day after he said he would handle that 
+	 part. I was impressed by my group members. Since I already had several 
+	 semesters of education in C programming and experience with programing
+	 micro controllers in both, C and assembler, I was amazed how fast code was
+	 working for them. I then saw that the other groups where very fast too, in 
+	 getting many basic thinks working. I felt stupid and was baffled by the
+	 sheer speed problems where solved. I was baffled until I was told that most
+	 groups took their code from examples, exercises or the Atmega32 data sheet.
+	 This also explained why code was working very quickly, but the projects as
+	 a hole seemed to grow very slow. It is the 28 of May. One week before writing
+	 this, I encountered people who had problems understanding the code they where
+	 responsible for.
+
+	 I don't think this was the students fault. I felt, coping all the masses of
+	 code was the only way for many to deal with the lack of knowledge in C and
+	 partly Java. The deadlines for parts of the C code might have helped to get
+	 the students to spit out more code, but I do not believe it was supporting
+	 the cause of writing code them selfs and understanding code. At least, I felt
+	 at some point like a rebel by trying to write all the code completely on my 
+	 own.
+	 
+	 This leads me to the question, what was the purpose of this project?
+
+	 I learned a lot about header files, prototyping, macros and definition by
+	 searching the internet for best practice information. I also read a lot 
+	 through avr libraries, avr libraries documentation and compiler documentation
+	 to understand what I am doing. I could do so and learn something new, because
+	 I already had a strong foundation. My class mates seemed to have to do things
+	 without foundation, directly steeping into a higher level of coding. I think
+	 not many will be happy of what they have learned this year, and I would like 
+	 to express my depression about that too.
+
+	@subsection prj_conclud_hwa Conclusion
+
+	 <ol>
+	 	<li>
+	 	    Please remove the parts about project management completly from the 
+		    agenda.
+	 	</li>
+	 	<li>
+		    Design a much smaller project or let the students find a project for
+		    them selfs. The later will support the interest, the students have,
+		    to their project and is in my opinion more in the mind of Project
+		    Based Learning (PBL, the reason I have chosen this university).
+	 	</li>
+		<li>
+		    Use gained time to give a proper introduction into C programming. It
+		    saddens me to see how this fundamental programing language was thought
+		    this semester.
+		</li>
+	 </ol>
+
 @section intro_sec Introduction
 
  This project aims to implement a very fast and straight forward way to do
