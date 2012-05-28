@@ -1,0 +1,283 @@
+/*!
+@page user_man User manual
+
+@section user_man_intro Introduction
+
+ The AVR_HACS GUI interface is a simple program intended for use with the 
+ AVR_HACS system. It has a simple lookup for card identifiers or RFID’s 
+ and associates a configuration with them. 
+
+	@subsection user_man_readership Intended Readership
+	
+	 This manual is meant for the average non-technical user and should be easy
+	 enough to understand for most people without a technical background.
+
+	@subsection user_man_purpose Purpose
+
+	 This simple information should be enough to get started with your AVR_HACS 
+	 system and make simple configuration for your card. There is also a reference
+	 to user cases outside the scope of the GUI but that is outside its main focus
+	 and for reference only.
+
+	@subsection user_man_docs Related dokuments
+
+	 This is written as part of an AVR_HACS report. The report has information 
+	 outside the scope of this manual.
+	
+	@subsection user_man_conventions Conventions
+
+	 Configuration Items refers to all configurable Items in a configuration other
+	 than the RFID. 
+
+	 First letter in Button and Field names are capitalized if it is a part of the 
+	 system.
+
+	@subsection user_man_problem Problem Reporting Instructions
+
+	 The system does not really work and the author of this manual is very aware 
+	 of that fact.
+
+@section user_man_overwiev Overview
+
+	@subsection user_man_req Requirements
+
+	 The software presented here is a graphic interface to the users configuration
+	 on the AVR_HACS system. You as a user must know the RFID assigned to you to 
+	 be able to work on the configuration for it. The configuration Items in the 
+	 configuration are simply numbered and no way of marking them further, so you 
+	 as a user must have a clear understanding of what the Items stand for.
+
+	@subsection user_man_funct Functional Description
+
+	 The software in question is really all about getting your RFID and then 
+	 setting and updating the configuration associated with that RFID. The GUI is 
+	 entirely contained in one window shown below:
+
+	 @image html gui_db_1.png "Data base management gui"
+	 @image latex gui_db_1.eps "Data base management gui" width=\textwidth
+
+	 In this chapter we will go through the options in the GUI from top left to 
+	 bottom right.
+
+	 This window is your only way to interact with your configuration. See a more 
+	 detailed picture below:
+
+	 @image html gui_db_detail.png "Data base management gui - detailed"
+	 @image latex gui_db_detail.eps "Data base management gui - detailed" width=\textwidth
+
+	 The RFID dropdown menu takes all the RFID’s that have been presented to the 
+	 system and on selecting the one you want it feeds it into the RFID Text Box. 
+	 The RFID that is written in the RFID Text Box is the one you are working with 
+	 at any time. 
+
+	 @waring The configuration below may not reflect the RFID in the RFID Text Box
+	 , until you select the Get Config button. You can very well overwrite or zero 
+	 out your configuration or another RFID’s configuration if you are not careful. 
+
+	 The PIN configuration box hold the PIN associated with an RFID. On creation an 
+	 RFID takes the PIN number 1234. 
+	
+	 The valid RFID box has to be checked for your card to work. Once an RFID card 
+	 has been presented to the system it is registered but with a default PIN (1234
+	 ), unchecked valid box and the rest of the configuration items at zero. The 
+	 card will not be accepted for anything other than registration if you have 
+	 not set the valid box to checked. 
+
+	 The Numbered Items are as it is set to accept any real number but constrains 
+	 should be set at a later stage. Watch this space. The configuration Items are 
+	 your settings for whatever the system is supposed to set, be it dimmers for 
+	 lights, settings for heat etc. 
+
+	 The Create User Button takes the RFID in the RFID Text Field and saves to the 
+	 system. The user will be saved as only the RFID, the PIN will be 1234, valid 
+	 check box unchecked and the configuration items will be saved as zero (0). 
+	 @note This is a secondary method of saving an FRID since the main method for 
+	 saving an RFID is to simply present it to the RFID reader. 
+
+	 The Delete User Button deletes an RFID and all the other configuration Items 
+	 associated with it. There is no prompt and the Items deleted may not be shown 
+	 at the same time as the RFID in the RFID Text Box. To get your initial 
+	 configuration. 
+
+	 Get Config Button gets all the configuration items for the RFID in the RFID 
+	 Text Box. It will fetch the status of the valid check box, the PIN number and 
+	 all the other numbered Items.
+
+	 Update Config Button registers all the configuration Items on the screen to 
+	 the RFID in the RFID Text Box. 
+
+	@subsection user_man_warn Cautions and Warnings
+
+	 The GUI itself has a Feedback and Information Box and gives the user some 
+	 nice feedback to whatever the system is doing. When a command is unsuccessful 
+	 the user should get a warning in the Feedback and Information Box. 
+
+	 The pitfalls in this system are relatively many but repairing them is also 
+	 relatively quick. Watch out that the RFID in the GUI may not be the ones 
+	 associated with the configuration shown. You have to select “Get Config” to 
+	 be sure. 
+
+	 There is no prompt when you delete a User/RFID. Be careful around this button.
+
+@section user_man_instruct Instruction Sections
+
+	@subsection user_man_sum Summary
+
+	 You need to present the system with the RFID card you want to work with or 
+	 write the RFID number down into the RFID Text Box. 
+
+	 Start the GUI and select your RFID from the Drop Down Box. 
+
+	 Select “Get Config” to see your configuration. Write your changes to the 
+	 Configuration Items and select “Update Config”. 
+
+	 Next time you present the RFID card the system should take the configuration 
+	 you set. 
+
+	@subsection user_man_start_finish Start to finish
+
+	 <ul>
+	 	<li>
+		    When you first have your card you simply present it to the RFID reader. 
+		    This is enough to register it in the system but it will have no effect other 
+		    than that.
+	 	</li>
+	 	<li>
+		    In this case we will say that the RFID is 123456.
+	 	</li>
+	 	<li>
+		    Start the GUI. You will be presented with the GUI below but you might 
+		    have to select the 123455 RFID from the Drop Down Menu and select the Get 
+		    Config Button to get the configuration for your RFID an the GUI should look 
+		    identical to the picture below.
+	 	</li>
+	 </ul>
+
+	 @image html gui_db_guide_1.png "Data base management reference 1"
+	 @image latex gui_db_guide_1.eps "Data base management reference 1" width=\textwidth
+
+	 <ul>
+	 	<li>
+		    Change the Configuration Items to your liking. Set the PIN to something 
+		    other than 1234 by selecting the PIN Text Box and write the one you want.
+	 	</li>
+	 	<li>
+		    Check Valid RFID. An RFID which is not checked as valid will not be 
+		    matched to a configuration and has no effect for its user.
+	 	</li>
+	 	<li>
+		    Fill in the Numbered Items. They might refer to dimmers, shades, 
+		    thermostats etc.
+	 	</li>
+	 	<li>
+		    Select Update Config to save your configuration. The GUI should look 
+		    something like the one below depending on what values you selected. Notice 
+		    the Information and Feedback Text Box tells you if the command was successful 
+		    or not.
+	 	</li>
+	 </ul>
+
+	 @image html gui_db_guide_2.png "Data base management reference 2"
+	 @image latex gui_db_guide_2.eps "Data base management reference 2" width=\textwidth
+
+	 <ul>
+	 	<li>
+		    That is it for your first use. Present your card to the system and watch 
+		    as the lighting, shades, heaters etc. take the values you asked for in your 
+		    configuration.
+	 	</li>
+	 </ul>
+
+	 Other user cases:
+
+	 <b>Delete a user.</b>
+	 <ul>
+	 	<li>
+		    Write the RFID you want to delete into the RFID Text Box or select it 
+		    from the RFID Drop Down Menu. Check that the correct RFID is selected.
+	 	</li>
+	 	<li>
+		    Select Delete User.
+	 	</li>
+	 </ul>
+
+
+	 <b>Create a User from the GUI.</b>
+
+	 @note This is a secondary method of saving an FRID since the main method for 
+	 saving an RFID is to simply present it to the RFID reader.
+
+	 <ul>
+	 	<li>
+		    Write the RFID you want to create a configuration for into the RFID Text 
+		    Box.
+	 	</li>
+	 	<li>
+		    Select Create User.
+	 	</li>
+	 </ul>
+
+	 <b>Get a configuration for a RFID and update it.</b>
+	 <ul>
+	 	<li>
+		    Write the RFID you want to see the configuration for into the RFID Text 
+		    Box or select it from the RFID Dropdown Menu.
+	 	</li>
+	 	<li>
+		    Select the Get Config Button. It gets all the configuration items for the 
+		    RFID in the RFID Text Box. It will fetch the status of the valid check box, 
+		    the PIN number and all the other numbered Items.
+	 	</li>
+	 	<li>
+		    Write your new configuration in each of the Configuration Items and check 
+		    or uncheck the Valid RFID checkbox in the configuration as wanted.
+	 	</li>
+	 	<li>
+		    Select Update Config to write your changes to the configuration.
+	 	</li>
+	 </ul>
+
+@section gui_user_man_reference Reference
+
+	@subsection gui_user_man_err_msg Error messages and causes.
+
+	 The GUI itself has a Feedback and Information Box and gives the user some 
+	 nice feedback to whatever the system is doing. When a command is unsuccessful 
+	 the user should get a warning in the Feedback and Information Box.
+
+	 On successfull Create User the Feedback and Information Box should say “RFID 
+	 123456 has been created in database (in case you are creating 123456 RFID). 
+	 If the system already has your RFID in the system a line will pop up saying “
+	 ERROR!!!!  Please write an RFID and make sure it doesn't already exist. Pin, 
+	 validity and configuration items are set later.” 
+	 Other errors likely to come up are bad database connections. In this case the 
+	 Derby database or the whole system, or contact support.
+
+	 On successful Delete User the Feedback and Information Box gives you feedback 
+	 indicating that it worked. On error a message reading “ERROR !!!! RFID 123456 
+	 can not be found in database." (in case you are deleting 123456 RFID).
+	 This is probably because it doesn’t exist in database or that the database 
+	 connection is faulty. Restart the database or the system or contact support.
+
+	 On successful Get Config the Feedback and Information Box gives you feedback 
+	 indicating that it worked. If it failed the Feedback and Information Box will 
+	 say "Configuration for 123456 can not be found in database." 
+	 Most likely the cause is that the RFID is not found in database. Select an 
+	 RFID with a valid configuration. In case that doesn’t work make sure the 
+	 database is running, restart the system or contact support.
+
+	 On successful Update Config the Feedback and Information Box gives you 
+	 feedback indicating that it worked. 
+	 If the user is trying to write in a invalid value to a Configuration Item an 
+	 error saying "ERROR!!!! Please use numbers only for each configuration item. 
+	 Pin should be a 4 letter number and each configuration item a number between 
+	 0 and 100." Should appear in the Feedback and Information Box.
+
+	 If for other errors the Feedback and Information Box should say "ERROR!!! 
+	 Check the database is ok and that you have a valid RFID".
+
+	@subsection gui_user_man_other_ref Other references
+
+	 This is written as part of an AVR_HACS report. The report has information 
+	 outside the scope of this manual.
+*/
