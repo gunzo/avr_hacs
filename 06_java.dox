@@ -223,4 +223,14 @@ chmod u+x run compile
 		    directory classes. Paths must be relative from there.
 	 	</li>
 	 </ul>
+
+@section java_db_ctr_pkg_diag Database and controll package class diagram
+
+ @image html database_control_package_class_diagram.png "Database and controll package class diagram"
+ @image latex database_control_package_class_diagram.eps "Database and controll package class diagram" width=\textwidth
+
+@section java_get_config_sequence GetConfig sequence diagram
+
+ @image html sequence_diagram_1.png "Sequence diagram for GetConfig"
+ @image latex sequence_diagram_1.eps "Sequence diagram for GetConfig" width=\textwidth
 */
