@@ -74,7 +74,7 @@ void SendString (char *s)
  * @brief Setup the USART Transmitter and Receive complete interrupts
  *
  * Selects the number of stop bits to be inserted by the transmitter (setting 0 means 1 stop bit is used)
- * Sets the number of data bit s (8 bits)
+ * Sets the number of data bits (8 bits)
  * Enables full duplex, double transmission speed
  * Configures baud rate
  * Enables global interrupts
@@ -100,7 +100,7 @@ void USART_Init( unsigned int baud )
 	/* Enable receiver and transmitter */
 
 }
-/* interrupt service routine for receive complete - c-cmpiler manual p.133*/
+/* interrupt service routine for receive complete */
 ISR(USART_RXC_vect) 
 {
 	ch = UDR;
