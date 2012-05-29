@@ -354,4 +354,137 @@
 	 @image html lcd_init_complete.png "Oscilloscope screen shot for the LCD_INIT macro."
 	 @image latex lcd_init_complete.eps "Oscilloscope screen shot for the LCD_INIT macro." width=\textwidth
 
+@section hardware_soft_spi SPI
+
+ The SPI (Serial peripheral Interface) module is responsible of the 
+ communication between RFID reader(Atmega8) and the Atmega32 through the build 
+ in SPI interface on the Atmega8 and Atmega32 microprocessor. The Atmega8 has 
+ a set of command codes from RFIDCodes.h header for the data handling from the 
+ RFID reader.
+
+ First the data is written one byte at time to the SPDR(data register). SS is 
+ pulled down at the start of the communication then SCK clock is started. The 
+ data shifted between the master and the slave, byte at a time. After the 
+ transfer is complete SCK clock and SPIF flag is set high signaling that the 
+ transfer is completed and SS is pulled high again to finish.
+
+ @image html spi_block.png "SPI block diagram"
+ @image latex spi_block.eps "SPI block diagram" width=\textwidth
+
+ SPI_MasterTransmit(chat data) is used to send the command codes to the RFID, 
+ the parameter Data is the command to be sent to RFID. First 0x55 command is 
+ sent to the RFID to get the UID, the slave reacts by sending an acknowledge (
+ 0x86) byte then 7 bytes of data of the UID. While the slave receives the 
+ command the slave sends dummy data 0xF5 to the master. For every byte 
+ transmitted to the slave, a byte is transmitted so we use send 0xF5 dummy 
+ data to push out the data from the slave.
+
+ @image html spi1.png "Command send 0x55"
+ @image latex spi1.eps "Command send 0x55" width=\textwidth
+
+ @image html spi2.png "Sending dumy data first time"
+ @image latex spi2.eps "Sending dumy data first time" width=\textwidth
+
+ @image html spi3.png "Sending dumy data second time, data receive"
+ @image latex spi3.eps "Sending dumy data second time, data receive" width=\textwidth
+
+ @image html spi4.png "Sending dumy data third time, data receive"
+ @image latex spi4.eps "Sending dumy data third time, data receive" width=\textwidth
+
+ @image html spi5.png "Sending dumy data 4. time, data receive"
+ @image latex spi5.eps "Sending dumy data 4. time, data receive" width=\textwidth
+
+ @image html spi6.png "Sending dumy data 5. time, data receive"
+ @image latex spi6.eps "Sending dumy data 5. time, data receive" width=\textwidth
+
+ @image html spi7.png "Sending dumy data 6. time, data receive"
+ @image latex spi7.eps "Sending dumy data 6. time, data receive" width=\textwidth
+
+ @image html spi8.png "Sending dumy data 7. time, data receive"
+ @image latex spi8.eps "Sending dumy data 7. time, data receive" width=\textwidth
+
+ @image html spi9.png "Sending dumy data 8. time, data receive"
+ @image latex spi9.eps "Sending dumy data 8. time, data receive" width=\textwidth
+
+
+@section hardware_soft_uart UART
+
+ The Universal Synchronous and Asynchronous serial Receiver and Transmitter 
+ (USART) is responsible for the communication between the Atmega32 and the PC 
+ terminal. The USART is initialized in full duplex allows communication in 
+ both directions simultaneously with a baud rate(bits per second) of 19200. 
+ The USART takes bytes of data and transmits them in sequential fashion. At 
+ the receiving end there is another USART that re-assembles bits into complete 
+ bytes.
+ Each USART contains a shift register, which is the fundamental method of 
+ conversion between serial and parallel forms. As soon as data is deposited in 
+ the shift register after completion of the previous character, the USART 
+ hardware generates a start bit, shifts the required number of data bits out 
+ to the line, generates and appends the parity bit (if used), and appends the 
+ stop bits.
+
+ @image html uart_frame_1.png "UART frame"
+ @image latex uart_frame_1.eps "UART frame" width=\textwidth
+
+ Both USART transmit and receive buffer share the same register UDR(USART Data 
+ Register).  UDRE(USART Data Register) flag needs to be high when when writing 
+ to the transmit buffer and receive buffer. 
+
+ @image html uart_seq.png "UART transmit using polling"
+ @image latex uart_seq.eps "UART transmit using polling" width=\textwidth
+
+ @image html uart_seq_receive.png "UART receive using polling"
+ @image latex uart_seq_receive.eps "UART receive using polling" width=\textwidth
+
+ The state machine implements the spi.h, uart.h, timers.h and rfid.h all of 
+ which collaborate to simplify the task of scanning a card, reading the data 
+ on it and parsing the card UID, along with other information o the PC 
+ terminal.
+
+@section hardware_soft_state_usart_spi UART and SPI state machine
+
+ @image html state_uart_spi.eps "UART and SPI state machine"
+ @image latex state_uart_spi.eps "UART and SPI state machine" width=\textwidth
+
+ Transitions between states are only triggered by external and internal 
+ interrupts except the activatet_timer_int state.
+
+ <b>Idle state:</b>
+
+ The state waits for an external interrupt on CARD_PRES. When the interrupt is 
+ set high we make the transition to next state card_present.
+
+ <b>card_present state:</b>
+
+ In the card_present state we call SPI_MasterTransmit(0x55) sending the 
+ command to the RFID reader asking for the UID of the card being scanned. Then 
+ we move to the next state wait_on_data.
+
+ <b>wait_on_data state:</b>
+
+ The state waits for external interrupt on DATA_READY. The RFID indicates by 
+ setting the Data_READY to high when it is ready to send data. When the 
+ interrupt is set high we make the transition to next state activate_timer.
+
+ <b>activate_timer_int state:</b>
+
+ In the activate_timer_int state timer interrupt gets activated to count to up 
+ to certain value for making sure the buffer is full and for setting timerflag 
+ high. Then move to the next read_data.
+
+ <b>read_data state:</b>
+
+ In the read_data  SPI_MasterTransmit(0xF5) gets called, spi transmits dummy 
+ data gets sent that forces the data out of the RFID.  The RFID reader reacts 
+ by responding with  an acknowledge 0x86 and  7 bytes of data of the UID are 
+ received by the SPDR(Data Register). FILL_BUFFER takes data from the SPRD and 
+ puts the data in array of chars SPI_MasterTransmit  keeps transmitting dummy 
+ data until we have filled the array of 9 chars, then move to the next 
+ wait_on_card_removed state.
+
+ <b>wait_on_card_removed state:</b>
+
+ The state waits until external interrupts on CARD_PRES gets low. Then the 
+ data gets transmitted with the SendString() to the PC terminal. Then the 
+ system reverts to idle state.
 */ 

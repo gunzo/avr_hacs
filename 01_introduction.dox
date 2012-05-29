@@ -152,6 +152,15 @@
 		</li>
 	 </ol>
 
+@section prj_tools Project tools
+
+	@subsection prj_tools_doxygen Doxygen
+
+	 Doxygen is a documentation system for many different languages, notably Java 
+	 and C. It is used in our project to generate an easy readable documentation
+	 for our source code, both Java and C. This document is completely  generated
+	 by doxygen. 
+
 @section intro_sec Introduction
 
  This project aims to implement a very fast and straight forward way to do
